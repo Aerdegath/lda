@@ -19,3 +19,6 @@
 
 # Mac Cache files
 *.DS_STORE
+
+# MATLAB files (too large for github)
+*.mat
