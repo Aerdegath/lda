@@ -31,12 +31,17 @@ int main(int argc, char *argv[])
 		D = CreateDatabase(TrainDatabasePath);
 		M = FisherfaceCore(D);
 
+        // save to binary file
+        // save output_faces.mat T m V_PCA V_Fisher ProjectedImages_Fisher;
+
 		DestroyFisher(M);
 		DestroyDatabase(D);
 
 		return 0;
     } else {
     	fprintf(stderr, "Load the saved database");
+        // read binary file
+        // load output_faces.mat;
         return 1;
     }
 }

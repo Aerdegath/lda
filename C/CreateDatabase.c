@@ -62,11 +62,12 @@ database_t *CreateDatabase(char TrainPath[])
     char *FullPath; // path of file, e.g., ../LDAIMAGES/Train2/1.ppm
     int FileCount = 0;
     char **Files; // list of filenames
+
     if (!dir) { // Failed to open directory
         return NULL;
     }
 
-    // number of entries in the directory
+    // count the entries in the directory
     myDirEntry = readdir(dir);
     while (myDirEntry) {
         if (strstr(myDirEntry->d_name, EXTENSION)) {
@@ -90,7 +91,7 @@ database_t *CreateDatabase(char TrainPath[])
     for (i = 0; i < ImageCount; i++) {
         myDirEntry = readdir(dir);
 
-        // skip files that don't match "*.ppm"
+        // skip files that don't match format "*.ppm"
         while (!strstr(myDirEntry->d_name, EXTENSION)) {
             myDirEntry = readdir(dir);
         }
@@ -111,12 +112,12 @@ database_t *CreateDatabase(char TrainPath[])
 
     //printf("# files = %d; # images = %d\n", FileCount, ImageCount);
 
-    // allocate a row for each pixel
+    // T is M*N high and ImageCount wide
     // changed this for use with LAPACK; still need to debug
-    T = (Pixel **) malloc (WIDTH * HEIGHT * sizeof(Pixel *));
-    Tp = (Pixel *) malloc ((WIDTH * HEIGHT) * ImageCount * sizeof(Pixel)); // ensures memory is contiguous
+    T = (Pixel **) malloc (WIDTH * HEIGHT * sizeof(Pixel *)); // each element of T points to start of a row
+    Tp = (Pixel *) malloc ((WIDTH * HEIGHT) * ImageCount * sizeof(Pixel)); // allocate all needed memory; this way ensures memory is contiguous
 
-    // allocate a column for each image
+    // point elements of T to the start of each row
     for(i = 0; i < WIDTH * HEIGHT; i++){
         T[i] = &Tp[i * ImageCount];
     }
