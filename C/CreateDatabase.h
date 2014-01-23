@@ -29,12 +29,14 @@ typedef struct {
     int rows, cols;
 } MATRIX;
 
-// creates the database from files in the directory
-// calls database_constructor
-database_t *CreateDatabase(char TrainPath[]);
+typedef struct {
+    Pixel ** data;
+    int pixels;
+    int images;
+} database_t;
 
-// actual constructor
-database_t *database_constructor(int pixels, int images);
+// creates the database from files in the directory
+database_t *CreateDatabase(char TrainPath[]);
 
 //Destructor
 void DestroyDatabase(database_t *D);

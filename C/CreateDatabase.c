@@ -153,42 +153,12 @@ database_t *CreateDatabase(char TrainPath[])
     free(dir);
     dir = NULL;
 
-    //COMMENTED OUT AT THE MOMENT BECAUSE OF MEMORY REASONS
-    //Save final data into database_t struct
-    //final = database_constructor(WIDTH * HEIGHT, ImageCount);
-
     final = malloc(sizeof(database_t));
     final->data = T;
     final->images = ImageCount;
     final->pixels = WIDTH * HEIGHT;
 
     return final;
-}
-
-/*
- * Constructs the database_t object
- * pixels: total number of pixels in the database (M*N*ImageCount)
- * images
- */
-database_t *database_constructor(const int pixels, const int images)
-{
-    int i;
-    database_t * database;
-    Pixel ** data;
-
-    database = malloc(sizeof(database_t));
-
-    // allocate data
-    data = (Pixel **) malloc(pixels * sizeof(Pixel *));
-    for (i = 0; i < pixels; i++) {
-        data[i] = (Pixel *) malloc(images * sizeof(Pixel));
-    }
-
-    database->data = data;
-    database->pixels = pixels;
-    database->images = images;
-
-    return database;
 }
 
 /*
