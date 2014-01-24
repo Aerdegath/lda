@@ -49,9 +49,10 @@ int ImageCount;
 // Returns: NULL on error
 database_t *CreateDatabase(char TrainPath[])
 {
+    int num_pixels = WIDTH * HEIGHT;
     PPMImage *image; // temp pointer used in image conversion to 1D
-    Pixel ** T; // Return 2D matrix of column vectors; each column is a linearized image
-    Pixel *Tp; // used for allocating the memory used in T
+    double ** T; // Return 2D matrix of column vectors; each column is a linearized image
+    double *Tp; // used for allocating the memory used in T
     Pixel *pix_ptr; // pointer to a pixel
     database_t *final;
 
@@ -112,13 +113,13 @@ database_t *CreateDatabase(char TrainPath[])
 
     //printf("# files = %d; # images = %d\n", FileCount, ImageCount);
 
-    // T is M*N high and ImageCount wide
+    // T is num_pixels high and ImageCount wide
     // changed this for use with LAPACK; still need to debug
-    T = (Pixel **) malloc (WIDTH * HEIGHT * sizeof(Pixel *)); // each element of T points to start of a row
-    Tp = (Pixel *) malloc ((WIDTH * HEIGHT) * ImageCount * sizeof(Pixel)); // allocate all needed memory; this way ensures memory is contiguous
+    T = (double **) malloc (num_pixels * sizeof(double *)); // each element of T points to start of a row
+    Tp = (double *) malloc ((num_pixels) * ImageCount * sizeof(double)); // allocate all needed memory; this way ensures memory is contiguous
 
     // point elements of T to the start of each row
-    for(i = 0; i < WIDTH * HEIGHT; i++){
+    for(i = 0; i < num_pixels; i++){
         T[i] = &Tp[i * ImageCount];
     }
 
@@ -132,8 +133,8 @@ database_t *CreateDatabase(char TrainPath[])
 
         pix_ptr = image->pixels;
         // for each row (each pixel being a row of T)
-        for (i = 0; i < WIDTH * HEIGHT; i++) {
-            T[i][j] = *pix_ptr; // copy pixel intensity data
+        for (i = 0; i < num_pixels; i++) {
+            T[i][j] = (double) pix_ptr->intensity; // copy pixel intensity data
             pix_ptr++;
         }
 
@@ -153,10 +154,11 @@ database_t *CreateDatabase(char TrainPath[])
     free(dir);
     dir = NULL;
 
-    final = malloc(sizeof(database_t));
+    // assign data to the returned structure
+    final = (database_t *) malloc(sizeof(database_t));
     final->data = T;
     final->images = ImageCount;
-    final->pixels = WIDTH * HEIGHT;
+    final->pixels = num_pixels;
 
     return final;
 }
@@ -169,9 +171,7 @@ void DestroyDatabase(database_t *D)
 {
     int i = 0;
 
-    for(i = 0; i < D->pixels; i++) {
-        free(D->data[i]);
-    }
+    free(D->data[0]);
     free(D->data);
     free(D);
 }

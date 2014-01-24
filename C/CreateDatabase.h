@@ -30,7 +30,7 @@ typedef struct {
 } MATRIX;
 
 typedef struct {
-    Pixel ** data;
+    double ** data;
     int pixels;
     int images;
 } database_t;

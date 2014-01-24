@@ -70,7 +70,7 @@ MATRIX **FisherfaceCore(const database_t *D)
     for (i = 0; i < D->pixels; i++) {
         temp = 0;
         for (j = 0; j < P; j++) {
-            temp += (double) D->data[i][j].intensity;
+            temp += (double) D->data[i][j];
         }
         mean->data[i][0] = (temp / P);
     }
@@ -89,9 +89,9 @@ MATRIX **FisherfaceCore(const database_t *D)
         A->data[i] = (double *) malloc(P * sizeof(double));
         // each column in A->data is the difference between an image and the mean
         for (j = 0; j < P; j++) {
-            A->data[i][j] = D->data[i][j].intensity - mean->data[i][0];
+            A->data[i][j] = D->data[i][j] - mean->data[i][0];
         }
-    }
+    }   
     
     //**************************************************************************
     //Calculate L, surrogate of covariance matrix

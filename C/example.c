@@ -9,13 +9,14 @@
  ******************************************************************************/
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "ppm.h"
 #include "CreateDatabase.h"
 #include "FisherfaceCore.h"
 
 //These pathnames only work if working in the LDA/C folder
-#define TrainDatabasePath "../LDAIMAGES/Train3"
+#define TrainDatabasePath "../LDAIMAGES/Change/sub_strain"
 #define TestDatabasePath "../LDAIMAGES/Test3"
 
 int main(int argc, char *argv[])

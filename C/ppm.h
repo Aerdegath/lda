@@ -36,11 +36,6 @@ typedef struct {
     unsigned char b; // blue value
 } Pixel;
 
-typedef struct {
-    Pixel ** data;
-    int pixels, images;
-} database_t;
-
 /*
  * Contains details about the image as well as a pointer to it.
  */
