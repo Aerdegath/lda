@@ -35,6 +35,8 @@ int main(int argc, char *argv[])
         // save to binary file
         // save output_faces.mat T m V_PCA V_Fisher ProjectedImages_Fisher;
 
+        // Recognition?
+
 		DestroyFisher(M);
 		DestroyDatabase(D);
 

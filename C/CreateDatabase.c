@@ -171,7 +171,7 @@ void DestroyDatabase(database_t *D)
 {
     int i = 0;
 
-    free(D->data[0]);
+    free(*D->data);
     free(D->data);
     free(D);
 }

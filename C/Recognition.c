@@ -77,10 +77,8 @@ int main()
         // First let's allocate our difference array
         Difference.rows = m_database.rows;
         Difference.cols = 1;
-        // Difference.data=new double*[Difference.rows];
         Difference.data = (double**) malloc(Difference.rows * sizeof (double*));
         for (i = 0; i < Difference.rows; i++) {
-            // Difference.data[i]=new double[Difference.cols];
             Difference.data[i] = (double*) malloc(Difference.cols
                     * sizeof (double));
         }
@@ -227,7 +225,6 @@ int MatrixRead_Binary() //Reads in all required matrices
     printf("read m.mat!!!\n");
     m_database.rows = rows;
     m_database.cols = cols;
-    //fin.close();
     fclose(fin);
     fin = 0;
     /**************************************************************/
@@ -248,16 +245,12 @@ int MatrixRead_Binary() //Reads in all required matrices
     fread(&rows, sizeof (int), 1, fin);
     fread(&cols, sizeof (int), 1, fin);
     printf("Inverse_V_Fisher.mat [%d %d]\n", rows, cols);
-    //Inverse_V_Fisher.data=new double*[rows];
     Inverse_V_Fisher.data = (double**) malloc(rows * sizeof (double*));
     for (i = 0; i < rows; i++) {
-        //Inverse_V_Fisher.data[i]=new double[cols];
         Inverse_V_Fisher.data[i] = (double*) malloc(cols * sizeof (double));
     }
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
-            //fin.read((char*)&Inverse_V_Fisher.data[i][j],
-                    //sizeof(Inverse_V_Fisher.data[i][j]));
             fread(&(Inverse_V_Fisher.data[i][j]), sizeof (double), 1, fin);
             /*printf("data verify (%.20lf)\n", Inverse_V_Fisher.data[i][j]);
             while(1)
@@ -269,7 +262,6 @@ int MatrixRead_Binary() //Reads in all required matrices
     printf("read Inverse_V_Fisher.mat!!!\n");
     Inverse_V_Fisher.rows = rows;
     Inverse_V_Fisher.cols = cols;
-    //fin.close();
     fclose(fin);
     fin = 0;
     /**************************************************************/
@@ -292,16 +284,12 @@ int MatrixRead_Binary() //Reads in all required matrices
     fread(&rows, sizeof (int), 1, fin);
     fread(&cols, sizeof (int), 1, fin);
     printf("Inverse_V_PCA.mat [%d %d]\n", rows, cols);
-    //Inverse_V_PCA.data=new double*[rows];
     Inverse_V_PCA.data = (double**) malloc(rows * sizeof (double*));
     for (i = 0; i < rows; i++) {
-        //Inverse_V_PCA.data[i]=new double[cols];
         Inverse_V_PCA.data[i] = (double*) malloc(cols * sizeof (double));
     }
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
-            //fin.read((char*)&Inverse_V_PCA.data[i][j],
-                    //sizeof(Inverse_V_PCA.data[i][j]));
             fread(&(Inverse_V_PCA.data[i][j]), sizeof (double), 1, fin);
             /*printf("data verify (%.20lf) total read - %d\n",
                     Inverse_V_PCA.data[i][j], ((i*cols)+j+1));
@@ -313,20 +301,11 @@ int MatrixRead_Binary() //Reads in all required matrices
     printf("read Inverse_V_PCA.mat!!!\n");
     Inverse_V_PCA.rows = rows;
     Inverse_V_PCA.cols = cols;
-    //fin.close();
     fclose(fin);
     fin = 0;
     /**************************************************************/
 
     /**************Read In The ProjectedImages_Fisher.mat****************/
-    /*fin.open("ProjectedImages_Fisher.mat",ios::in|ios::binary);
-    if(!fin.is_open())
-        {
-            cerr << "Unable to Open ProjectedImages_Fisher.mat!!!" << endl;
-            return 0;
-        }
-    fin.read((char*)&rows,sizeof(rows));
-    fin.read((char*)&cols,sizeof(cols));*/
     fin = fopen("ProjectedImages_Fisher.mat", "rb");
     if (fin == NULL) {
         printf("Unable to Open ProjectedImages_Fisher.mat!!!\n");
@@ -335,15 +314,12 @@ int MatrixRead_Binary() //Reads in all required matrices
     fread(&rows, sizeof (int), 1, fin);
     fread(&cols, sizeof (int), 1, fin);
     printf("ProjectedImages_Fisher.mat [%d %d]\n", rows, cols);
-    //ProjectedImages_Fisher.data=new double*[rows];
     ProjectedImages_Fisher.data = (double**) malloc(rows * sizeof (double*));
     for (i = 0; i < rows; i++) {
-        //ProjectedImages_Fisher.data[i]=new double[cols];
         ProjectedImages_Fisher.data[i] = (double*) malloc(cols * sizeof (double));
     }
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
-            //fin.read((char*)&ProjectedImages_Fisher.data[i][j],sizeof(double));
             fread(&(ProjectedImages_Fisher.data[i][j]), sizeof (double), 1, fin);
         }
     }
@@ -351,20 +327,11 @@ int MatrixRead_Binary() //Reads in all required matrices
     fflush(stdout);
     ProjectedImages_Fisher.rows = rows;
     ProjectedImages_Fisher.cols = cols;
-    //fin.close();
     fclose(fin);
 
     /**************************************************************/
 
     /**************Read In The v_fisherT_x_v_pcaT.mat****************/
-    /*fin.open("v_fisherT_x_v_pcaT.mat",ios::in|ios::binary);
-    if(!fin.is_open())
-        {
-            cerr << "Unable to Open v_fisherT_x_v_pcaT.mat!!!" << endl;
-            return 0;
-        }
-    fin.read((char*)&rows,sizeof(rows));
-    fin.read((char*)&cols,sizeof(cols));*/
     fin = fopen("v_fisherT_x_v_pcaT.mat", "rb");
     if (fin == NULL) {
         printf("Unable to Open v_fisherT_x_v_pcaT.mat!!!\n");
@@ -373,16 +340,12 @@ int MatrixRead_Binary() //Reads in all required matrices
     fread(&rows, sizeof (int), 1, fin);
     fread(&cols, sizeof (int), 1, fin);
     printf("v_fisherT_x_v_pcaT.mat [%d %d]\n", rows, cols);
-    //v_fisherT_x_v_pcaT.data=new double*[rows];
     v_fisherT_x_v_pcaT.data = (double**) malloc(rows * sizeof (double*));
     for (i = 0; i < rows; i++) {
-        //v_fisherT_x_v_pcaT.data[i]=new double[cols];
         v_fisherT_x_v_pcaT.data[i] = (double*) malloc(cols * sizeof (double));
     }
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
-            //fin.read((char*)&v_fisherT_x_v_pcaT.data[i][j],
-                    //sizeof(v_fisherT_x_v_pcaT.data[i][j]));
             fread(&(v_fisherT_x_v_pcaT.data[i][j]), sizeof (double), 1, fin);
 
         }
@@ -391,7 +354,6 @@ int MatrixRead_Binary() //Reads in all required matrices
     fflush(stdout);
     v_fisherT_x_v_pcaT.rows = rows;
     v_fisherT_x_v_pcaT.cols = cols;
-    //fin.close();
     fclose(fin);
     /**************************************************************/
 
