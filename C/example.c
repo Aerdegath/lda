@@ -11,10 +11,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ppm.h"
 #include "CreateDatabase.h"
 #include "FisherfaceCore.h"
 #include "matrix.h"
+#include "ppm.h"
 
 //These pathnames only work if working in the LDA/C folder
 #define TrainDatabasePath "../LDAIMAGES/Change/sub_strain"

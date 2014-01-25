@@ -1,25 +1,37 @@
 # Source: http://mrbook.org/tutorials/make/
 
 CC=gcc
-CFLAGS=-c -g -Wall
-SOURCES=CreateDatabase.c example.c FisherfaceCore.c grayscale.c matrix.c ppm.c
-OBJECTS=$(SOURCES:.c=.o)
-EXECUTABLE=example
 
-all: $(SOURCES) $(EXECUTABLE)
+all: example unit
 
-$(EXECUTABLE): $(OBJECTS)
-	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
+example: example.o CreateDatabase.o FisherfaceCore.o matrix.o ppm.o grayscale.o
+	$(CC) -g -Wall example.o CreateDatabase.o FisherfaceCore.o matrix.o \
+	ppm.o grayscale.o -o example
 
-matrix_unit: matrix_unit.o
-	$(CC) $(CFLAGS) matrix_unit.o -o matrix_unit
+unit: matrix_unit.o matrix.o
+	$(CC) -g -Wall matrix_unit.o matrix.o -o matrix_unit
 
-matrix_unit.o: matrix_unit.c
-	$(CC) $(CFLAGS) matrix_unit.c
+matrix_unit.o: matrix_unit.c matrix.c matrix.h
+	$(CC) -c -g -Wall matrix_unit.c
 
-.c.o:
-	$(CC) $(CFLAGS) $< -o $@
+CreateDatabase.o: CreateDatabase.c CreateDatabase.h grayscale.h ppm.h
+	$(CC) -c -g -Wall CreateDatabase.c
+
+FisherfaceCore.o: FisherfaceCore.c FisherfaceCore.h ppm.h CreateDatabase.h matrix.h
+	$(CC) -c -g -Wall -lm FisherfaceCore.c
+
+example.o: example.c CreateDatabase.h FisherfaceCore.h matrix.h ppm.h
+	$(CC) -c -g -Wall example.c 
+
+grayscale.o: grayscale.c grayscale.h ppm.h
+	$(CC) -c -g -Wall grayscale.c
+
+matrix.o: matrix.c matrix.h
+	$(CC) -c -g -Wall matrix.c
+
+ppm.o: ppm.c ppm.h
+	$(CC) -c -g -Wall ppm.c
 
 clean:
-	rm -rf $(OBJECTS) $(EXECUTABLE) core
+	rm -rf *.o *.gch example matrix_unit
 	clear

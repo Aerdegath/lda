@@ -20,6 +20,8 @@
 #ifndef __GRAYSCALE_H__
 #define __GRAYSCALE_H__
 
+#include "ppm.h"
+
 void grayscale(PPMImage* img);
 
 #endif

@@ -21,8 +21,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ppm.h"
 #include "grayscale.h"
+#include "ppm.h"
 
 #define GREY(v,r,g,b) v = (.2989 * r + .5870 * g + .1140 * b)
 

@@ -37,8 +37,8 @@
 
 #include "ppm.h"
 #include "CreateDatabase.h"
-#include "FisherfaceCore.h"
 #include "matrix.h"
+#include "FisherfaceCore.h"
 
 MATRIX **FisherfaceCore(const database_t *D)
 {
@@ -59,7 +59,6 @@ MATRIX **FisherfaceCore(const database_t *D)
     //Calculate mean
     //<.m: 36>
     mean = matrix_constructor(D->pixels, 1);
-
 
     //Calculate Mean matrix
     for (i = 0; i < D->pixels; i++) {

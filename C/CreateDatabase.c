@@ -35,9 +35,9 @@ sequentially.
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "ppm.h"
 #include "CreateDatabase.h"
 #include "grayscale.h"
+#include "ppm.h"
 
 /* All training images should have the following extension otherwise they are
    skipped */
