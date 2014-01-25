@@ -34,6 +34,7 @@
 #include <string.h>
 #include <math.h>
 #include "ppm.h"
+#include "matrix.h"
 
 typedef struct {
     double ** data;
@@ -230,13 +231,6 @@ int MatrixRead_Binary() //Reads in all required matrices
     /**************************************************************/
 
     /**************Read In The Inverse_V_Fisher.mat****************/
-    /*fin.open("Inverse_V_Fisher.mat",ios::in|ios::binary);
-    if (!fin.is_open()) {
-        cerr << "Unable to Open Inverse_V_Fisher.mat!!!" << endl;
-        return 0;
-    }
-    fin.read((char*)&rows, sizeof(rows));
-    fin.read((char*)&cols, sizeof(cols));*/
     fin = fopen("Inverse_V_Fisher.mat", "rb");
     if (fin == NULL) {
         printf("Unable to Open Inverse_V_Fisher.mat!!!\n");
@@ -268,14 +262,6 @@ int MatrixRead_Binary() //Reads in all required matrices
 
 
     /**************Read In The Inverse_V_PCA.mat****************/
-    /*fin.open("Inverse_V_PCA.mat",ios::in|ios::binary);
-    if(!fin.is_open())
-        {
-            cerr << "Unable to Open Inverse_V_PCA!!!" << endl;
-            return 0;
-        }
-    fin.read((char*)&rows,sizeof(rows));
-    fin.read((char*)&cols,sizeof(cols));*/
     fin = fopen("Inverse_V_PCA.mat", "rb");
     if (fin == NULL) {
         printf("Unable to Open Inverse_V_PCA!!!\n");
@@ -284,6 +270,7 @@ int MatrixRead_Binary() //Reads in all required matrices
     fread(&rows, sizeof (int), 1, fin);
     fread(&cols, sizeof (int), 1, fin);
     printf("Inverse_V_PCA.mat [%d %d]\n", rows, cols);
+    // TODO: This is wrong! Need to malloc contiguous memory
     Inverse_V_PCA.data = (double**) malloc(rows * sizeof (double*));
     for (i = 0; i < rows; i++) {
         Inverse_V_PCA.data[i] = (double*) malloc(cols * sizeof (double));

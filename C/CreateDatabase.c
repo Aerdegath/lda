@@ -37,6 +37,7 @@ sequentially.
 
 #include "ppm.h"
 #include "CreateDatabase.h"
+#include "grayscale.h"
 
 /* All training images should have the following extension otherwise they are
    skipped */
@@ -116,7 +117,7 @@ database_t *CreateDatabase(char TrainPath[])
     // T is num_pixels high and ImageCount wide
     // changed this for use with LAPACK; still need to debug
     T = (double **) malloc (num_pixels * sizeof(double *)); // each element of T points to start of a row
-    Tp = (double *) malloc ((num_pixels) * ImageCount * sizeof(double)); // allocate all needed memory; this way ensures memory is contiguous
+    Tp = (double *) malloc (num_pixels * ImageCount * sizeof(double)); // allocate all needed memory; this way ensures memory is contiguous
 
     // point elements of T to the start of each row
     for(i = 0; i < num_pixels; i++){
@@ -169,8 +170,6 @@ database_t *CreateDatabase(char TrainPath[])
  */
 void DestroyDatabase(database_t *D)
 {
-    int i = 0;
-
     free(*D->data);
     free(D->data);
     free(D);

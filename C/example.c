@@ -14,6 +14,7 @@
 #include "ppm.h"
 #include "CreateDatabase.h"
 #include "FisherfaceCore.h"
+#include "matrix.h"
 
 //These pathnames only work if working in the LDA/C folder
 #define TrainDatabasePath "../LDAIMAGES/Change/sub_strain"
@@ -24,7 +25,7 @@ int main(int argc, char *argv[])
     int load_stuff = 0; //Set to 0 if training database needs to be created
     //int pass = 0;
     //int fail = 0;
-    
+
     database_t *D;
 	MATRIX ** M;
 

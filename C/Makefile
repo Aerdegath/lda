@@ -1,21 +1,25 @@
-example : example.o grayscale.o CreateDatabase.o ppm.o FisherfaceCore.o
-	gcc -Wall -g example.o CreateDatabase.o grayscale.o ppm.o FisherfaceCore.o -o example
+# Source: http://mrbook.org/tutorials/make/
 
-example.o : example.c CreateDatabase.c CreateDatabase.h ppm.h
-	gcc -Wall -g -c example.c CreateDatabase.c
+CC=gcc
+CFLAGS=-c -g -Wall
+SOURCES=CreateDatabase.c example.c FisherfaceCore.c grayscale.c matrix.c ppm.c
+OBJECTS=$(SOURCES:.c=.o)
+EXECUTABLE=example
 
-ppm.o : ppm.c ppm.h
-	gcc -Wall -g -c ppm.c
+all: $(SOURCES) $(EXECUTABLE)
 
-CreateDatabase.o : CreateDatabase.c grayscale.c CreateDatabase.h ppm.h
-	gcc -Wall -g -c CreateDatabase.c grayscale.c
+$(EXECUTABLE): $(OBJECTS)
+	$(CC) $(LDFLAGS) $(OBJECTS) -o $@
 
-grayscale.o : grayscale.c ppm.h
-	gcc -Wall -g -c grayscale.c
+matrix_unit: matrix_unit.o
+	$(CC) $(CFLAGS) matrix_unit.o -o matrix_unit
 
-FisherfaceCore.o : FisherfaceCore.c CreateDatabase.h ppm.h  FisherfaceCore.h
-	gcc -Wall -g -c FisherfaceCore.c
+matrix_unit.o: matrix_unit.c
+	$(CC) $(CFLAGS) matrix_unit.c
+
+.c.o:
+	$(CC) $(CFLAGS) $< -o $@
 
 clean:
-	rm -rf *.o example core a.out
+	rm -rf $(OBJECTS) $(EXECUTABLE) core
 	clear

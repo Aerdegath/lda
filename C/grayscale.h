@@ -1,4 +1,6 @@
 /*
+   PPMShop (C) 2008 Josiah s. Yeagley aka meanmon13
+
    This program is free software; you can redistribute it and/or modify
    it under the terms of the GNU General Public License as published by
    the Free Software Foundation; either version 2 of the License, or (at
@@ -15,28 +17,9 @@
    MA 02110-1301 USA
  */
 
-#ifndef __CREATEDATABASE_H__
-#define __CREATEDATABASE_H__
+#ifndef __GRAYSCALE_H__
+#define __GRAYSCALE_H__
 
-//GLOBAL VARIABLES FOR WIDTH AND HEIGHT
-//These must be changed to the correct width/height of ppm files being used
-#ifndef WIDTH
-#define WIDTH 128
-#endif
-#ifndef HEIGHT
-#define HEIGHT 192
-#endif
-
-typedef struct {
-    double ** data;
-    int pixels;
-    int images;
-} database_t;
-
-// creates the database from files in the directory
-database_t *CreateDatabase(char TrainPath[]);
-
-//Destructor
-void DestroyDatabase(database_t *D);
+void grayscale(PPMImage* img);
 
 #endif

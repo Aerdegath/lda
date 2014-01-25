@@ -38,11 +38,12 @@
 #include "ppm.h"
 #include "CreateDatabase.h"
 #include "FisherfaceCore.h"
+#include "matrix.h"
 
 MATRIX **FisherfaceCore(const database_t *D)
 {
-    int Class_population = 4; //Set value according to database (Images per person)
-    int C = D->images / Class_population; //Number of classes (or persons)
+    //int Class_population = 4; //Set value according to database (Images per person)
+    //int C = D->images / Class_population; //Number of classes (or persons)
     int P = D->images; //Total Number of training images
     int i, j, k;
     double temp = 0;
@@ -52,19 +53,13 @@ MATRIX **FisherfaceCore(const database_t *D)
     MATRIX *L; //Surrogate of covariance matrix, L = A_trans * A
 
     M = (MATRIX **) malloc(4 * sizeof(MATRIX *));
-    
+
 
     //**************************************************************************
     //Calculate mean
     //<.m: 36>
-    mean = (MATRIX *) malloc(sizeof(MATRIX));
-    mean->data = (double **) malloc (D->pixels * sizeof(double *));
-    mean->rows = D->pixels;
-    mean->cols = 1;
+    mean = matrix_constructor(D->pixels, 1);
 
-    for (i = 0; i < D->pixels; i++){
-        mean->data[i] = (double *) malloc(sizeof(double));
-    }
 
     //Calculate Mean matrix
     for (i = 0; i < D->pixels; i++) {
@@ -81,67 +76,46 @@ MATRIX **FisherfaceCore(const database_t *D)
     //**************************************************************************
     //Calculate A, deviation matrix
     //<.m: 39>
-    A = (MATRIX *) malloc(sizeof(MATRIX));
-    A->data = (double **) malloc(D->pixels * sizeof(double *));
-    A->rows = D->pixels;
-    A->cols = P;
+    A = matrix_constructor(D->pixels, P);
+
     for (i = 0; i < D->pixels; i++) {
-        A->data[i] = (double *) malloc(P * sizeof(double));
         // each column in A->data is the difference between an image and the mean
         for (j = 0; j < P; j++) {
             A->data[i][j] = D->data[i][j] - mean->data[i][0];
         }
-    }   
-    
+    }
+
     //**************************************************************************
     //Calculate L, surrogate of covariance matrix
     //<.m: 42>
-    L = (MATRIX *) malloc(sizeof(MATRIX));
-    L->data = (double **) malloc(P * sizeof(double *));
-    L->rows = P;
-    L->cols = P;
-    
+    L = matrix_constructor(P, P);
+
     //1st loop controls row of L
     //2nd loop controls column of L
     //3rd loop iterates through a vector of pixels
     for (i = 0; i < P; i++) {
-    	L->data[i] = (double *) malloc(P * sizeof(double));
-    	for (j = 0; j < P; j++) {
-        	temp = 0;
+        for (j = 0; j < P; j++) {
+            temp = 0;
         	for (k = 0; k < D->pixels; k++) {
-            	temp += A->data[k][i] * A->data[k][j];
-        	}
-        	L->data[i][j] = temp;
+                temp += A->data[k][i] * A->data[k][j];
+            }
+            L->data[i][j] = temp;
         }
         printf("Calculation %d\n", i);
-    }    
-    
+    }
+
 	//FREE INTERMEDIATES
-	for (i = 0; i < A->rows; i++) {
-        free(A->data[i]);
-    }
-    free(A->data);
-    free(A);
-    for (i = 0; i < L->rows; i++) {
-    	free(L->data[i]);
-    }
-    free(L->data);
-    free(L);
-	
+    matrix_destructor(A);
+    matrix_destructor(L);
+
     return M;
 }
 
 void DestroyFisher(MATRIX **M)
 {
-    int i;
-
-    for(i = 0; i < M[0]->rows; i++){
-        free(M[0]->data[i]);
-    }
-    free(M[0]->data);
-    free(M[0]);
-    //free(M[1]);
-    //free(M[2]);
-    //free(M[3]);
+    matrix_destructor(M[0]);
+//    matrix_destructor(M[1]);
+//    matrix_destructor(M[2]);
+//    matrix_destructor(M[3]);
     free(M);
 }
