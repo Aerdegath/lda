@@ -14,7 +14,10 @@
    Free Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston,
    MA 02110-1301 USA
  */
- 
+
+#ifndef __CREATEDATABASE_H__
+#define __CREATEDATABASE_H__
+
 //GLOBAL VARIABLES FOR WIDTH AND HEIGHT
 //These must be changed to the correct width/height of ppm files being used
 #ifndef WIDTH
@@ -26,15 +29,14 @@
 
 typedef struct {
     double ** data;
-    int rows, cols;
-} MATRIX;
+    int pixels;
+    int images;
+} database_t;
 
 // creates the database from files in the directory
-// calls database_constructor
 database_t *CreateDatabase(char TrainPath[]);
-
-// actual constructor
-database_t *database_constructor(int pixels, int images);
 
 //Destructor
 void DestroyDatabase(database_t *D);
+
+#endif

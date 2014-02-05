@@ -16,6 +16,7 @@
 *.exe
 *.out
 *.app
+example
 
 # Mac Cache files
 *.DS_STORE

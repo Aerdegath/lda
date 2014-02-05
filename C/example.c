@@ -9,13 +9,15 @@
  ******************************************************************************/
 
 #include <stdio.h>
+#include <stdlib.h>
 
-#include "ppm.h"
 #include "CreateDatabase.h"
 #include "FisherfaceCore.h"
+#include "matrix.h"
+#include "ppm.h"
 
 //These pathnames only work if working in the LDA/C folder
-#define TrainDatabasePath "../LDAIMAGES/Train3"
+#define TrainDatabasePath "../LDAIMAGES/Change/sub_strain"
 #define TestDatabasePath "../LDAIMAGES/Test3"
 
 int main(int argc, char *argv[])
@@ -23,7 +25,7 @@ int main(int argc, char *argv[])
     int load_stuff = 0; //Set to 0 if training database needs to be created
     //int pass = 0;
     //int fail = 0;
-    
+
     database_t *D;
 	MATRIX ** M;
 
@@ -31,12 +33,19 @@ int main(int argc, char *argv[])
 		D = CreateDatabase(TrainDatabasePath);
 		M = FisherfaceCore(D);
 
+        // save to binary file
+        // save output_faces.mat T m V_PCA V_Fisher ProjectedImages_Fisher;
+
+        // Recognition?
+
 		DestroyFisher(M);
 		DestroyDatabase(D);
 
 		return 0;
     } else {
     	fprintf(stderr, "Load the saved database");
+        // read binary file
+        // load output_faces.mat;
         return 1;
     }
 }

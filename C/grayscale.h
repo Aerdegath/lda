@@ -17,33 +17,11 @@
    MA 02110-1301 USA
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#ifndef __GRAYSCALE_H__
+#define __GRAYSCALE_H__
 
-#include "grayscale.h"
 #include "ppm.h"
 
-#define GREY(v,r,g,b) v = (.2989 * r + .5870 * g + .1140 * b)
+void grayscale(PPMImage* img);
 
-/*
- * This function takes an image and equalizes the
- * RGB value of each pixel according to the 30% 59%
- * 11% weigh scale.
- */
-void grayscale(PPMImage* img)
-{
-    int intensity, index, i, j;
-    for (i = 0; i < img->height; i++) {
-        for (j = 0; j < img->width; j++) {
-            index = i * img->width + j;
-            GREY(intensity,
-                    img->pixels[index].r,
-                    img->pixels[index].g,
-                    img->pixels[index].b);
-            memset(&img->pixels[index], intensity, sizeof (Pixel));
-        }
-    }
-    return;
-}
-//--------------------------------------------------------------------
+#endif

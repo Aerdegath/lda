@@ -1,21 +1,37 @@
-example : example.o grayscale.o CreateDatabase.o ppm.o FisherfaceCore.o
-	gcc -Wall -g example.o CreateDatabase.o grayscale.o ppm.o FisherfaceCore.o -o example
+# Source: http://mrbook.org/tutorials/make/
 
-example.o : example.c CreateDatabase.c CreateDatabase.h ppm.h
-	gcc -Wall -g -c example.c CreateDatabase.c
+CC=gcc
 
-ppm.o : ppm.c ppm.h
-	gcc -Wall -g -c ppm.c
+all: example unit
 
-CreateDatabase.o : CreateDatabase.c grayscale.c CreateDatabase.h ppm.h
-	gcc -Wall -g -c CreateDatabase.c grayscale.c
+example: example.o CreateDatabase.o FisherfaceCore.o matrix.o ppm.o grayscale.o
+	$(CC) -g -Wall example.o CreateDatabase.o FisherfaceCore.o matrix.o \
+	ppm.o grayscale.o -o example
 
-grayscale.o : grayscale.c ppm.h
-	gcc -Wall -g -c grayscale.c
+unit: matrix_unit.o matrix.o
+	$(CC) -g -Wall matrix_unit.o matrix.o -o matrix_unit
 
-FisherfaceCore.o : FisherfaceCore.c CreateDatabase.h ppm.h  FisherfaceCore.h
-	gcc -Wall -g -c FisherfaceCore.c
+matrix_unit.o: matrix_unit.c matrix.c matrix.h
+	$(CC) -c -g -Wall matrix_unit.c
+
+CreateDatabase.o: CreateDatabase.c CreateDatabase.h grayscale.h ppm.h
+	$(CC) -c -g -Wall CreateDatabase.c
+
+FisherfaceCore.o: FisherfaceCore.c FisherfaceCore.h ppm.h CreateDatabase.h matrix.h
+	$(CC) -c -g -Wall -lm FisherfaceCore.c
+
+example.o: example.c CreateDatabase.h FisherfaceCore.h matrix.h ppm.h
+	$(CC) -c -g -Wall example.c 
+
+grayscale.o: grayscale.c grayscale.h ppm.h
+	$(CC) -c -g -Wall grayscale.c
+
+matrix.o: matrix.c matrix.h
+	$(CC) -c -g -Wall matrix.c
+
+ppm.o: ppm.c ppm.h
+	$(CC) -c -g -Wall ppm.c
 
 clean:
-	rm -rf *.o example core a.out
+	rm -rf *.o *.gch example matrix_unit
 	clear
