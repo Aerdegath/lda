@@ -1,7 +1,8 @@
 #include <stdlib.h>
+#include <stdio.h>
 #include "matrix.h"
 
-/* 
+/*
  * Allocates and returns a MATRIX * object
  * rows, cols: number of rows, columns to be allocated
  */
@@ -13,13 +14,32 @@ MATRIX * matrix_constructor(int rows, int cols)
     double * datap = (double *) malloc(rows * cols * sizeof(double));
     M->rows = rows;
     M->cols = cols;
-    M->data = data;
 
+	//set each data pointer to the first element in each row
     for (i = 0; i < rows; i++) {
         data[i] = &datap[i * cols];
     }
 
+	M->data = data;
+
     return M;
+}
+
+/*
+ * Print function
+ */
+void matrix_print(MATRIX *M)
+{
+    int i, j;
+
+    for(i = 0; i < M->rows; i++)
+    {
+        for(j = 0; j < M->cols; j++)
+        {
+            printf("%12.2lf", M->data[i][j]);
+        }
+        printf("\n");
+    }
 }
 
 /*

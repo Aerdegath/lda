@@ -47,7 +47,7 @@ MATRIX **FisherfaceCore(const database_t *D)
     //int Class_population = 4; //Set value according to database (Images per person)
     //int C = D->images / Class_population; //Number of classes (or persons)
     int P = D->images; //Total Number of training images
-    int i, j, k;
+    int i, j;
     double temp = 0;
     MATRIX **M; //What the function returns
     MATRIX *mean; //Mean matrix
@@ -93,19 +93,7 @@ MATRIX **FisherfaceCore(const database_t *D)
 
     cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, P, P, P, 1, *A->data, P, *A->data, P, 0, *L->data, P);
 
-    //1st loop controls row of L
-    //2nd loop controls column of L
-    //3rd loop iterates through a vector of pixels
-    for (i = 0; i < P; i++) {
-//        for (j = 0; j < P; j++) {
-//            temp = 0;
-//        	for (k = 0; k < D->pixels; k++) {
-//                temp += A->data[k][i] * A->data[k][j];
-//            }
-//            L->data[i][j] = temp;
-//        }
-        printf("Calculation %d\n", i);
-    }
+    matrix_print(L);
 
 	//FREE INTERMEDIATES
     matrix_destructor(A);
