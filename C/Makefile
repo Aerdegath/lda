@@ -2,10 +2,8 @@
 
 CC=gcc
 
-all: example unit
-
-example: example.o CreateDatabase.o FisherfaceCore.o matrix.o ppm.o grayscale.o
-	$(CC) -g -Wall example.o CreateDatabase.o FisherfaceCore.o matrix.o \
+example: example.o CreateDatabase.o FisherfaceCore.o grayscale.o matrix.o ppm.o
+	$(CC) -g -Wall example.o CreateDatabase.o FisherfaceCore.o -lblas matrix.o \
 	ppm.o grayscale.o -o example
 
 unit: matrix_unit.o matrix.o
@@ -18,10 +16,10 @@ CreateDatabase.o: CreateDatabase.c CreateDatabase.h grayscale.h ppm.h
 	$(CC) -c -g -Wall CreateDatabase.c
 
 FisherfaceCore.o: FisherfaceCore.c FisherfaceCore.h ppm.h CreateDatabase.h matrix.h
-	$(CC) -c -g -Wall -lm FisherfaceCore.c
+	$(CC) -c -g -Wall FisherfaceCore.c
 
 example.o: example.c CreateDatabase.h FisherfaceCore.h matrix.h ppm.h
-	$(CC) -c -g -Wall example.c 
+	$(CC) -c -g -Wall example.c
 
 grayscale.o: grayscale.c grayscale.h ppm.h
 	$(CC) -c -g -Wall grayscale.c

@@ -34,6 +34,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include <cblas.h>
+#include <assert.h>
 
 #include "ppm.h"
 #include "CreateDatabase.h"
@@ -85,26 +87,30 @@ MATRIX **FisherfaceCore(const database_t *D)
     }
 
     //**************************************************************************
-    //Calculate L, surrogate of covariance matrix
+    //Calculate L, surrogate of covariance matrix; L = A'*A;
     //<.m: 42>
     L = matrix_constructor(P, P);
+
+    cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, P, P, P, 1, *A->data, P, *A->data, P, 0, *L->data, P);
 
     //1st loop controls row of L
     //2nd loop controls column of L
     //3rd loop iterates through a vector of pixels
     for (i = 0; i < P; i++) {
-        for (j = 0; j < P; j++) {
-            temp = 0;
-        	for (k = 0; k < D->pixels; k++) {
-                temp += A->data[k][i] * A->data[k][j];
-            }
-            L->data[i][j] = temp;
-        }
+//        for (j = 0; j < P; j++) {
+//            temp = 0;
+//        	for (k = 0; k < D->pixels; k++) {
+//                temp += A->data[k][i] * A->data[k][j];
+//            }
+//            L->data[i][j] = temp;
+//        }
         printf("Calculation %d\n", i);
     }
 
 	//FREE INTERMEDIATES
     matrix_destructor(A);
+
+    //...
     matrix_destructor(L);
 
     return M;
