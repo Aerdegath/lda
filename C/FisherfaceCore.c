@@ -87,13 +87,12 @@ MATRIX **FisherfaceCore(const database_t *D)
     }
 
     //**************************************************************************
-    //Calculate L, surrogate of covariance matrix; L = A'*A;
+    //Calculate L, surrogate of covariance matrix, L = A'*A;
     //<.m: 42>
     L = matrix_constructor(P, P);
 
     cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, P, P, P, 1, *A->data, P, *A->data, P, 0, *L->data, P);
 
-    matrix_print(L);
 
 	//FREE INTERMEDIATES
     matrix_destructor(A);
