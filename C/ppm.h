@@ -30,7 +30,7 @@ typedef struct {
     union { // When converted to grayscale the red channel & intensity are one
             // and the same
         unsigned char r; // red value
-        char intensity; // 8-bit value: 0x00 = white, 0xFF = black
+        unsigned char intensity; // 8-bit value: 0x00 = white, 0xFF = black
     };
     unsigned char g; // green value
     unsigned char b; // blue value

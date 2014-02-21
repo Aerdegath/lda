@@ -161,6 +161,16 @@ database_t *CreateDatabase(char TrainPath[])
     final->images = ImageCount;
     final->pixels = num_pixels;
 
+    printf("created database:\n");
+    for(i = 0; i < final->pixels; i++)
+    {
+        for(j = 0; j < final->images; j++)
+        {
+            printf("%12.2lf", final->data[i][j]);
+        }
+        printf("\n");
+    }
+
     return final;
 }
 

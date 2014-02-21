@@ -74,6 +74,9 @@ MATRIX **FisherfaceCore(const database_t *D)
     //Assign mean database
     M[0] = mean;
 
+    printf("\nmean:\n");
+    matrix_print(M[0]);
+
     //**************************************************************************
     //Calculate A, deviation matrix
     //<.m: 39>
@@ -86,6 +89,9 @@ MATRIX **FisherfaceCore(const database_t *D)
         }
     }
 
+    printf("\ndeviation:\n");
+    matrix_print(A);
+
     //**************************************************************************
     //Calculate L, surrogate of covariance matrix, L = A'*A;
     //<.m: 42>
@@ -93,6 +99,8 @@ MATRIX **FisherfaceCore(const database_t *D)
 
     cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, P, P, P, 1, *A->data, P, *A->data, P, 0, *L->data, P);
 
+    printf("\nsurrogate of covariance:\n");
+    matrix_print(L);
 
 	//FREE INTERMEDIATES
     matrix_destructor(A);
