@@ -3,7 +3,7 @@
 CC=gcc
 
 example: example.o CreateDatabase.o FisherfaceCore.o grayscale.o matrix.o ppm.o
-	$(CC) -g -Wall example.o CreateDatabase.o FisherfaceCore.o -lblas matrix.o \
+	$(CC) -g -Wall example.o CreateDatabase.o FisherfaceCore.o -lblas -llapack matrix.o \
 	ppm.o grayscale.o -o example
 
 unit: matrix_unit.o matrix.o

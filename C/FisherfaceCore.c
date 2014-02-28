@@ -35,6 +35,7 @@
 #include <string.h>
 #include <math.h>
 #include <cblas.h>
+#include <lapacke.h>
 #include <assert.h>
 
 #include "ppm.h"
@@ -42,17 +43,23 @@
 #include "matrix.h"
 #include "FisherfaceCore.h"
 
-MATRIX **FisherfaceCore(const database_t *D)
+MATRIX **FisherfaceCore(const database_t *Database)
 {
     //int Class_population = 4; //Set value according to database (Images per person)
     //int C = D->images / Class_population; //Number of classes (or persons)
-    int P = D->images; //Total Number of training images
+    int P = Database->images; //Total Number of training images
     int i, j;
+    int INFO; //Return value for LAPACK eigen function
     double temp = 0;
     MATRIX **M; //What the function returns
     MATRIX *mean; //Mean matrix
     MATRIX *A; //Deviation matrix
     MATRIX *L; //Surrogate of covariance matrix, L = A_trans * A
+    MATRIX *D; //Eigenvalues
+    MATRIX *V; //Eigenvectors
+
+    MATRIX *WORK; //Workspace for LAPACK eigen function
+    int *IWORK; //Workspace for LAPACK eigen function
 
     M = (MATRIX **) malloc(4 * sizeof(MATRIX *));
 
@@ -60,13 +67,13 @@ MATRIX **FisherfaceCore(const database_t *D)
     //**************************************************************************
     //Calculate mean
     //<.m: 36>
-    mean = matrix_constructor(D->pixels, 1);
+    mean = matrix_constructor(Database->pixels, 1);
 
     //Calculate Mean matrix
-    for (i = 0; i < D->pixels; i++) {
+    for (i = 0; i < Database->pixels; i++) {
         temp = 0;
         for (j = 0; j < P; j++) {
-            temp += (double) D->data[i][j];
+            temp += (double) Database->data[i][j];
         }
         mean->data[i][0] = (temp / P);
     }
@@ -74,23 +81,23 @@ MATRIX **FisherfaceCore(const database_t *D)
     //Assign mean database
     M[0] = mean;
 
-    printf("\nmean:\n");
-    matrix_print(M[0]);
+    //printf("\nmean:\n");
+    //matrix_print(M[0]);
 
     //**************************************************************************
     //Calculate A, deviation matrix
     //<.m: 39>
-    A = matrix_constructor(D->pixels, P);
+    A = matrix_constructor(Database->pixels, P);
 
-    for (i = 0; i < D->pixels; i++) {
+    for (i = 0; i < Database->pixels; i++) {
         // each column in A->data is the difference between an image and the mean
         for (j = 0; j < P; j++) {
-            A->data[i][j] = D->data[i][j] - mean->data[i][0];
+            A->data[i][j] = Database->data[i][j] - mean->data[i][0];
         }
     }
 
-    printf("\ndeviation:\n");
-    matrix_print(A);
+    //printf("\ndeviation:\n");
+    //matrix_print(A);
 
     //**************************************************************************
     //Calculate L, surrogate of covariance matrix, L = A'*A;
@@ -99,14 +106,24 @@ MATRIX **FisherfaceCore(const database_t *D)
 
     cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, P, P, P, 1, *A->data, P, *A->data, P, 0, *L->data, P);
 
-    printf("\nsurrogate of covariance:\n");
-    matrix_print(L);
+    //printf("\nsurrogate of covariance:\n");
+    //matrix_print(L);
+
+    WORK = matrix_constructor(P, P);
+    IWORK = (int *) malloc(P * P * sizeof(int));
+    D = matrix_constructor(P, 1);
+
+    INFO = LAPACKE_dysev(LAPACK_ROW_MAJOR, 'V', 'U', P, *L->data, P, *D->data);
+    V = L;
+    L = NULL;
+
+    printf("INFO: %d\n", INFO);
 
 	//FREE INTERMEDIATES
     matrix_destructor(A);
 
     //...
-    matrix_destructor(L);
+    matrix_destructor(V);
 
     return M;
 }

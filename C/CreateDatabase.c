@@ -112,7 +112,7 @@ database_t *CreateDatabase(char TrainPath[])
     //////////////Create Database Here///////////////
     FullPath = (char *) malloc (255 + strlen(TrainPath) + 2);
 
-    //printf("# files = %d; # images = %d\n", FileCount, ImageCount);
+    printf("# files = %d; # images = %d\n", FileCount, ImageCount);
 
     // T is num_pixels high and ImageCount wide
     // changed this for use with LAPACK; still need to debug
@@ -161,15 +161,15 @@ database_t *CreateDatabase(char TrainPath[])
     final->images = ImageCount;
     final->pixels = num_pixels;
 
-    printf("created database:\n");
-    for(i = 0; i < final->pixels; i++)
-    {
-        for(j = 0; j < final->images; j++)
-        {
-            printf("%12.2lf", final->data[i][j]);
-        }
-        printf("\n");
-    }
+//    printf("created database:\n");
+//    for(i = 0; i < final->pixels; i++)
+//    {
+//        for(j = 0; j < final->images; j++)
+//        {
+//            printf("%12.2lf", final->data[i][j]);
+//        }
+//        printf("\n");
+//    }
 
     return final;
 }
