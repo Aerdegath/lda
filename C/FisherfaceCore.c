@@ -113,7 +113,7 @@ MATRIX **FisherfaceCore(const database_t *Database)
     IWORK = (int *) malloc(P * P * sizeof(int));
     D = matrix_constructor(P, 1);
 
-    INFO = LAPACKE_dysev(LAPACK_ROW_MAJOR, 'V', 'U', P, *L->data, P, *D->data);
+    INFO = LAPACKE_dsyev(LAPACK_ROW_MAJOR, 'V', 'U', P, *L->data, P, *D->data);
     V = L;
     L = NULL;
 
