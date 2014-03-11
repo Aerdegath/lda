@@ -58,8 +58,8 @@ MATRIX **FisherfaceCore(const database_t *Database)
     MATRIX *D; //Eigenvalues
     MATRIX *V; //Eigenvectors
 
-    MATRIX *WORK; //Workspace for LAPACK eigen function
-    int *IWORK; //Workspace for LAPACK eigen function
+    //MATRIX *WORK; //Workspace for LAPACK eigen function
+    //int *IWORK; //Workspace for LAPACK eigen function
 
     M = (MATRIX **) malloc(4 * sizeof(MATRIX *));
 
@@ -109,8 +109,8 @@ MATRIX **FisherfaceCore(const database_t *Database)
     //printf("\nsurrogate of covariance:\n");
     //matrix_print(L);
 
-    WORK = matrix_constructor(P, P);
-    IWORK = (int *) malloc(P * P * sizeof(int));
+    //WORK = matrix_constructor(P, P);
+    //IWORK = (int *) malloc(P * P * sizeof(int));
     D = matrix_constructor(P, 1);
 
     INFO = LAPACKE_dsyev(LAPACK_ROW_MAJOR, 'V', 'U', P, *L->data, P, *D->data);
