@@ -109,15 +109,16 @@ MATRIX **FisherfaceCore(const database_t *Database)
     //printf("\nsurrogate of covariance:\n");
     //matrix_print(L);
 
-    //WORK = matrix_constructor(P, P);
-    //IWORK = (int *) malloc(P * P * sizeof(int));
     D = matrix_constructor(P, 1);
 
     INFO = LAPACKE_dsyev(LAPACK_ROW_MAJOR, 'V', 'U', P, *L->data, P, *D->data);
     V = L;
     L = NULL;
 
-    printf("INFO: %d\n", INFO);
+    //printf("D, eigenvalues:\n");
+    //matrix_print(D);
+    //printf("V, eigenvectors:\n");
+    //matrix_print(V);
 
 	//FREE INTERMEDIATES
     matrix_destructor(A);

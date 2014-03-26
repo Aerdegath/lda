@@ -45,4 +45,4 @@ for i = 1 : Train_Number
     T = [T temp]; % 'T' grows after each turn
 end
 
-T = double(T);
+T = double(T)

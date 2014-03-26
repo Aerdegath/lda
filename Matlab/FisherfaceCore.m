@@ -32,15 +32,15 @@ Class_number = ( size(T,2) )/4; % Number of classes (or persons)
 Class_population = 4; % Number of images in each class
 P = Class_population * Class_number; % Total number of training images
 
-%%%%%%%%%%%%%%%%%%%%%%%% calculating the mean image 
-m_database = mean(T,2);
+%%%%%%%%%%%%%%%%%%%%%%%% calculating the mean image
+m_database = mean(T,2)
 
 %%%%%%%%%%%%%%%%%%%%%%%% Calculating the deviation of each image from mean image
-A = T - repmat(m_database,1,P);
+A = T - repmat(m_database,1,P)
 
 %%%%%%%%%%%%%%%%%%%%%%%% Snapshot method of Eigenface algorithm
-L = A'*A; % L is the surrogate of covariance matrix C=A*A'.
-[V D] = eig(L); % Diagonal elements of D are the eigenvalues for both L=A'*A and C=A*A'.
+L = A'*A % L is the surrogate of covariance matrix C=A*A'.
+[V D] = eig(L) % Diagonal elements of D are the eigenvalues for both L=A'*A and C=A*A'.
 
 %%%%%%%%%%%%%%%%%%%%%%%% Sorting and eliminating small eigenvalues
 L_eig_vec = [];

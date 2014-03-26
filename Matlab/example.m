@@ -16,19 +16,22 @@ clc
 close all
 
 % The TrainDatabase is what algorithm uses to learn?
-TrainDatabasePath = '..\LDAIMAGES\Train3';
+TrainDatabasePath = '..\LDAIMAGES\Change\ss_resize'
 % The TestDatabase is what images are being tested
 TestDatabasePath = '..\LDAIMAGES\Test3';
 
 load_stuff = 0; % need to run only the first time after you change the database
 
 if (load_stuff == 0)
+    fprintf('Database, T:\n');
     T = CreateDatabase(TrainDatabasePath);
     [m V_PCA V_Fisher ProjectedImages_Fisher] = FisherfaceCore(T);
     save output_faces.mat T m V_PCA V_Fisher ProjectedImages_Fisher;
 else
     load output_faces.mat *;
 end
+
+return;
 
 pass = 0;
 fail = 0;
