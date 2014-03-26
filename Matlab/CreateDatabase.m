@@ -35,7 +35,7 @@ T = [];
 for i = 1 : Train_Number
     % I have chosen the name of each image in databases as a corresponding
     % number. However, it is not mandatory!
-    str = strcat(TrainDatabasePath,'\',int2str(i),'.ppm');
+    str = strcat(TrainDatabasePath,'\',sprintf('%02d',i),'.ppm');
     img = imread(str);
     img = rgb2gray(img);
     
@@ -45,4 +45,4 @@ for i = 1 : Train_Number
     T = [T temp]; % 'T' grows after each turn
 end
 
-T = double(T)
+T = double(T);
