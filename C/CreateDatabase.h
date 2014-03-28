@@ -21,10 +21,10 @@
 //GLOBAL VARIABLES FOR WIDTH AND HEIGHT
 //These must be changed to the correct width/height of ppm files being used
 #ifndef WIDTH
-#define WIDTH 128
+#define WIDTH 7
 #endif
 #ifndef HEIGHT
-#define HEIGHT 192
+#define HEIGHT 10
 #endif
 
 typedef struct {

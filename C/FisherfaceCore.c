@@ -49,7 +49,7 @@ MATRIX **FisherfaceCore(const database_t *Database)
     //int C = D->images / Class_population; //Number of classes (or persons)
     int P = Database->images; //Total Number of training images
     int i, j;
-    int INFO; //Return value for LAPACK eigen function
+    //int INFO; //Return value for LAPACK eigen function
     double temp = 0;
     MATRIX **M; //What the function returns
     MATRIX *mean; //Mean matrix
@@ -58,10 +58,16 @@ MATRIX **FisherfaceCore(const database_t *Database)
     MATRIX *D; //Eigenvalues
     MATRIX *V; //Eigenvectors
 
-    //MATRIX *WORK; //Workspace for LAPACK eigen function
-    //int *IWORK; //Workspace for LAPACK eigen function
-
     M = (MATRIX **) malloc(4 * sizeof(MATRIX *));
+
+
+    printf("Database:\n");
+    for (i = 0; i < WIDTH * HEIGHT; i++) {
+        for (j = 0; j < P; j++) {
+            printf("%6.0f", Database->data[i][j]);
+        }
+        printf("\n");
+    }
 
 
     //**************************************************************************
@@ -111,7 +117,7 @@ MATRIX **FisherfaceCore(const database_t *Database)
 
     D = matrix_constructor(P, 1);
 
-    INFO = LAPACKE_dsyev(LAPACK_ROW_MAJOR, 'V', 'U', P, *L->data, P, *D->data);
+    LAPACKE_dsyev(LAPACK_ROW_MAJOR, 'V', 'U', P, *L->data, P, *D->data);
     V = L;
     L = NULL;
 

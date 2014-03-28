@@ -29,6 +29,7 @@ starting number are read in together. (e.g., 1, 10, 11, 12, ..., 2, 20, 21, 22,
 sequentially.
  **/
 
+#define _GNU_SOURCE
 #include <assert.h>
 #include <dirent.h>
 #include <string.h>
@@ -42,6 +43,8 @@ sequentially.
 /* All training images should have the following extension otherwise they are
    skipped */
 #define EXTENSION ".ppm"
+
+int file_select(const struct dirent *entry);
 
 //Global variable: number of image files
 int ImageCount;
@@ -59,16 +62,17 @@ database_t *CreateDatabase(char TrainPath[])
 
     int i = 0;
     int j = 0;
-    DIR *dir = opendir(TrainPath); // Open Directory Pointer
-    struct dirent *myDirEntry; // pointer to directory entry
+    //DIR *dir = opendir(TrainPath); // Open Directory Pointer
+    //struct dirent *myDirEntry; // pointer to directory entry
     char *FullPath; // path of file, e.g., ../LDAIMAGES/Train2/1.ppm
     int FileCount = 0;
-    char **Files; // list of filenames
+    //char **Files; // list of filenames
 
-    if (!dir) { // Failed to open directory
-        return NULL;
-    }
+    //if (!dir) { // Failed to open directory
+    //    return NULL;
+    //}
 
+/*
     // count the entries in the directory
     myDirEntry = readdir(dir);
     while (myDirEntry) {
@@ -76,21 +80,29 @@ database_t *CreateDatabase(char TrainPath[])
             ImageCount++; // number of actual image files
         }
         ++FileCount;
-         myDirEntry = readdir(dir);
+        myDirEntry = readdir(dir);
     }
-
+*/
     // Now let's go back and extract all filenames
-    rewinddir(dir); // move dir pointer back to beginning
+    //rewinddir(dir); // move dir pointer back to beginning
 
     // Allocate memory for list of names
-    Files = (char **) malloc(ImageCount * sizeof(char *));
+    //Files = (char **) malloc(ImageCount * sizeof(char *));
 
-    if (!Files) { //Dynamic Memory Allocation Failed
-        return NULL;
+    //if (!Files) { //Dynamic Memory Allocation Failed
+    //    return NULL;
+    //}
+
+    // read in all filenames
+    struct dirent **namelist;
+    ImageCount = scandir(TrainPath, &namelist, file_select, alphasort);
+    if (ImageCount < 0) {
+        perror("scandir");
     }
 
     // Read in the names of each file
     for (i = 0; i < ImageCount; i++) {
+        /*
         myDirEntry = readdir(dir);
 
         // skip files that don't match format "*.ppm"
@@ -107,18 +119,17 @@ database_t *CreateDatabase(char TrainPath[])
             }
             return NULL;
         }
+        */
     }
 
     //////////////Create Database Here///////////////
     FullPath = (char *) malloc (255 + strlen(TrainPath) + 2);
 
-    printf("# files = %d; # images = %d\n", FileCount, ImageCount);
+    //printf("# files = %d; # images = %d\n", FileCount, ImageCount);
 
     // T is num_pixels high and ImageCount wide
-    // changed this for use with LAPACK; still need to debug
     T = (double **) malloc (num_pixels * sizeof(double *)); // each element of T points to start of a row
-    Tp = (double *) malloc (num_pixels * ImageCount * sizeof(double)); // allocate all needed memory; this way ensures memory is contiguous
-
+    Tp = (double *) malloc (num_pixels * ImageCount * sizeof(double)); // ensures memory is contiguous
     // point elements of T to the start of each row
     for(i = 0; i < num_pixels; i++){
         T[i] = &Tp[i * ImageCount];
@@ -126,7 +137,7 @@ database_t *CreateDatabase(char TrainPath[])
 
     // for each image (each image being a column of T)
     for (j = 0; j < ImageCount; j++) {
-        sprintf(FullPath, "%s/%s", TrainPath, Files[j]);
+        sprintf(FullPath, "%s/%s", TrainPath, namelist[j]->d_name);
         // FullPath is now the entire path to image in question
 
         image = ppm_image_constructor(FullPath);
@@ -147,13 +158,18 @@ database_t *CreateDatabase(char TrainPath[])
 
     /* Once all files have been loaded and database created we need to free
     the memory that was used to store the list and the filenames */
+    //for (i = 0; i < ImageCount; i++) {
+    //   free(Files[i]);
+    //}
+    //free(Files);
+    //Files = NULL;
     for (i = 0; i < ImageCount; i++) {
-       free(Files[i]);
+        free(namelist[i]);
     }
-    free(Files);
-    Files = NULL;
-    free(dir);
-    dir = NULL;
+    free(namelist);
+    namelist = NULL;
+    //free(dir);
+    //dir = NULL;
 
     // assign data to the returned structure
     final = (database_t *) malloc(sizeof(database_t));
@@ -183,4 +199,17 @@ void DestroyDatabase(database_t *D)
     free(*D->data);
     free(D->data);
     free(D);
+}
+
+/*
+ * used to match files with the proper extension
+ * entry: directory entry
+ */
+int file_select(const struct dirent *entry)
+{
+    if (strstr(entry->d_name, ".ppm") != NULL) {
+        return 1;
+    } else {
+        return 0;
+    }
 }
