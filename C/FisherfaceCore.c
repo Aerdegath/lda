@@ -61,13 +61,13 @@ MATRIX **FisherfaceCore(const database_t *Database)
     M = (MATRIX **) malloc(4 * sizeof(MATRIX *));
 
 
-    printf("Database:\n");
-    for (i = 0; i < WIDTH * HEIGHT; i++) {
-        for (j = 0; j < P; j++) {
-            printf("%6.0f", Database->data[i][j]);
-        }
-        printf("\n");
-    }
+//    printf("Database:\n");
+//    for (i = 0; i < WIDTH * HEIGHT; i++) {
+//        for (j = 0; j < P; j++) {
+//            printf("%6.0f", Database->data[i][j]);
+//        }
+//        printf("\n");
+//    }
 
 
     //**************************************************************************
@@ -112,8 +112,8 @@ MATRIX **FisherfaceCore(const database_t *Database)
 
     cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, P, P, P, 1, *A->data, P, *A->data, P, 0, *L->data, P);
 
-    //printf("\nsurrogate of covariance:\n");
-    //matrix_print(L);
+    printf("\nL = surrogate of covariance:\n");
+    matrix_print(L);
 
     D = matrix_constructor(P, 1);
 

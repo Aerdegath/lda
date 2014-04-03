@@ -65,7 +65,7 @@ database_t *CreateDatabase(char TrainPath[])
     //DIR *dir = opendir(TrainPath); // Open Directory Pointer
     //struct dirent *myDirEntry; // pointer to directory entry
     char *FullPath; // path of file, e.g., ../LDAIMAGES/Train2/1.ppm
-    int FileCount = 0;
+    //int FileCount = 0;
     //char **Files; // list of filenames
 
     //if (!dir) { // Failed to open directory
