@@ -2,6 +2,8 @@
 
 CC=gcc
 
+all: example unit
+
 example: example.o CreateDatabase.o FisherfaceCore.o grayscale.o matrix.o ppm.o
 	$(CC) -g -Wall example.o CreateDatabase.o FisherfaceCore.o -llapacke -llapack -lblas matrix.o ppm.o grayscale.o -o example
 

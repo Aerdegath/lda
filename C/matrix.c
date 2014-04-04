@@ -15,12 +15,12 @@ MATRIX * matrix_constructor(int rows, int cols)
     M->rows = rows;
     M->cols = cols;
 
-	//set each data pointer to the first element in each row
+    //set each data pointer to the first element in each row
     for (i = 0; i < rows; i++) {
         data[i] = &datap[i * cols];
     }
 
-	M->data = data;
+    M->data = data;
 
     return M;
 }
@@ -32,10 +32,8 @@ void matrix_print(MATRIX *M)
 {
     int i, j;
 
-    for(i = 0; i < M->rows; i++)
-    {
-        for(j = 0; j < M->cols; j++)
-        {
+    for(i = 0; i < M->rows; i++) {
+        for(j = 0; j < M->cols; j++) {
             printf("%12.2lf", M->data[i][j]);
         }
         printf("\n");

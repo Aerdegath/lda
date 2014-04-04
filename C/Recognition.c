@@ -35,11 +35,8 @@
 #include <math.h>
 #include "ppm.h"
 #include "matrix.h"
-
-typedef struct {
-    double ** data;
-    int rows, cols;
-} MATRIX;
+#include <cblas.h>
+#include <lapacke.h>
 
 MATRIX m_database; //ends up being a 1d matrix
 MATRIX Inverse_V_Fisher;
@@ -58,7 +55,7 @@ int main()
 
     // We need to load the data structures that were created by the
     // CreateDatabase step
-    if (!MatrixRead_Binary()) { //Load structures
+    if (MatrixRead_Binary() != 0) { //Load structures
         printf("Error!!!\n");
         exit(-1);
     }
@@ -76,13 +73,14 @@ int main()
         printf("Test Image Loaded From Disk and converted to grayscale...\n");
 
         // First let's allocate our difference array
-        Difference.rows = m_database.rows;
-        Difference.cols = 1;
-        Difference.data = (double**) malloc(Difference.rows * sizeof (double*));
-        for (i = 0; i < Difference.rows; i++) {
-            Difference.data[i] = (double*) malloc(Difference.cols
-                    * sizeof (double));
-        }
+        Difference = matrix_constructor(m_database.rows, 1);
+        //Difference.rows = m_database.rows;
+        //Difference.cols = 1;
+        //Difference.data = (double**) malloc(Difference.rows * sizeof (double*));
+        //for (i = 0; i < Difference.rows; i++) {
+        //    Difference.data[i] = (double*) malloc(Difference.cols
+        //            * sizeof (double));
+        //}
 
         for (i = 0; i < m_database.rows; i++) {
             Difference.data[i][0] = TestImage->pixels[i].r
@@ -93,20 +91,22 @@ int main()
         //v_fisherT_x_v_pcaT * Difference
         // Why is this commented out?
 
-        ProjectedTestImage.rows = v_fisherT_x_v_pcaT.rows;
-        ProjectedTestImage.cols = Difference.cols;
-        ProjectedTestImage.data = (double**) malloc(ProjectedTestImage.rows
-                * sizeof (double*));
+        ProjectedTestImage = matrix_constructor(rows, cols);
+//        ProjectedTestImage.rows = v_fisherT_x_v_pcaT.rows;
+//        ProjectedTestImage.cols = Difference.cols;
+//        ProjectedTestImage.data = (double**) malloc(ProjectedTestImage.rows
+//                * sizeof (double*));
         // allocate memory for our new array
-        for (i = 0; i < ProjectedTestImage.rows; i++) {
-            ProjectedTestImage.data[i] = (double*) malloc(ProjectedTestImage.cols
-                    * sizeof (double));
-            if (ProjectedTestImage.data[i] == 0) {
-                printf("Dynamic Allocation Failed!!!\n");
-                return -1;
-            }
-        }
+//        for (i = 0; i < ProjectedTestImage.rows; i++) {
+//            ProjectedTestImage.data[i] = (double*) malloc(ProjectedTestImage.cols
+//                    * sizeof (double));
+//            if (ProjectedTestImage.data[i] == 0) {
+//                printf("Dynamic Allocation Failed!!!\n");
+//                return -1;
+//            }
+//        }
 
+        // clbas_dgemm();
         for (i = 0; i < v_fisherT_x_v_pcaT.rows; i++) { // perform matrix mult.
             // computation
             for (j = 0; j < Difference.cols; j++) { // This loop executes once
@@ -173,16 +173,18 @@ int main()
         // Need to free the memory that was allocated...
 
         // free Difference matrix
-        for (i = 0; i < Difference.rows; i++) {
-            free(Difference.data[i]);
-        }
-        free(Difference.data);
+        matrix_destructor(Difference);
+//        for (i = 0; i < Difference.rows; i++) {
+//            free(Difference.data[i]);
+//        }
+//        free(Difference.data);
 
         // Free ProjectedTestImage matrix...
-        for (i = 0; i < ProjectedTestImage.rows; i++) {
-            free(ProjectedTestImage.data[i]);
-        }
-        free(ProjectedTestImage.data);
+        matrix_destructor(ProjectedTestImage);
+//        for (i = 0; i < ProjectedTestImage.rows; i++) {
+//            free(ProjectedTestImage.data[i]);
+//        }
+//        free(ProjectedTestImage.data);
 
         // Free q vector
         free(q); // wha? why exactly did i use malloc?
@@ -210,10 +212,11 @@ int MatrixRead_Binary() //Reads in all required matrices
     fread(&rows, sizeof (int), 1, fin);
     fread(&cols, sizeof (int), 1, fin);
     printf("m.mat [%d %d]\n", rows, cols);
-    m_database.data = (double**) malloc(rows * sizeof (double*));
-    for (i = 0; i < rows; i++) {
-        m_database.data[i] = (double*) malloc(cols * sizeof (double));
-    }
+    m_database = matrix_constructor(rows, cols);
+    //m_database.data = (double**) malloc(rows * sizeof (double*));
+    //for (i = 0; i < rows; i++) {
+    //    m_database.data[i] = (double*) malloc(cols * sizeof (double));
+    //}
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
             fread(&(m_database.data[i][j]), sizeof (double), 1, fin);
@@ -224,8 +227,8 @@ int MatrixRead_Binary() //Reads in all required matrices
         }
     }
     printf("read m.mat!!!\n");
-    m_database.rows = rows;
-    m_database.cols = cols;
+    //m_database.rows = rows;
+    //m_database.cols = cols;
     fclose(fin);
     fin = 0;
     /**************************************************************/
@@ -239,10 +242,11 @@ int MatrixRead_Binary() //Reads in all required matrices
     fread(&rows, sizeof (int), 1, fin);
     fread(&cols, sizeof (int), 1, fin);
     printf("Inverse_V_Fisher.mat [%d %d]\n", rows, cols);
-    Inverse_V_Fisher.data = (double**) malloc(rows * sizeof (double*));
-    for (i = 0; i < rows; i++) {
-        Inverse_V_Fisher.data[i] = (double*) malloc(cols * sizeof (double));
-    }
+    Inverse_V_Fisher = matrix_constructor(rows, cols);
+    //Inverse_V_Fisher.data = (double**) malloc(rows * sizeof (double*));
+    //for (i = 0; i < rows; i++) {
+    //    Inverse_V_Fisher.data[i] = (double*) malloc(cols * sizeof (double));
+    //}
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
             fread(&(Inverse_V_Fisher.data[i][j]), sizeof (double), 1, fin);
@@ -254,8 +258,8 @@ int MatrixRead_Binary() //Reads in all required matrices
         }
     }
     printf("read Inverse_V_Fisher.mat!!!\n");
-    Inverse_V_Fisher.rows = rows;
-    Inverse_V_Fisher.cols = cols;
+    //Inverse_V_Fisher.rows = rows;
+    //Inverse_V_Fisher.cols = cols;
     fclose(fin);
     fin = 0;
     /**************************************************************/
@@ -270,11 +274,11 @@ int MatrixRead_Binary() //Reads in all required matrices
     fread(&rows, sizeof (int), 1, fin);
     fread(&cols, sizeof (int), 1, fin);
     printf("Inverse_V_PCA.mat [%d %d]\n", rows, cols);
-    // TODO: This is wrong! Need to malloc contiguous memory
-    Inverse_V_PCA.data = (double**) malloc(rows * sizeof (double*));
-    for (i = 0; i < rows; i++) {
+    Inverse_V_PCA = matrix_constructor(rows, cols);
+    //Inverse_V_PCA.data = (double**) malloc(rows * sizeof (double*));
+    //for (i = 0; i < rows; i++) {
         Inverse_V_PCA.data[i] = (double*) malloc(cols * sizeof (double));
-    }
+    //}
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
             fread(&(Inverse_V_PCA.data[i][j]), sizeof (double), 1, fin);
@@ -286,8 +290,8 @@ int MatrixRead_Binary() //Reads in all required matrices
         }
     }
     printf("read Inverse_V_PCA.mat!!!\n");
-    Inverse_V_PCA.rows = rows;
-    Inverse_V_PCA.cols = cols;
+    //Inverse_V_PCA.rows = rows;
+    //Inverse_V_PCA.cols = cols;
     fclose(fin);
     fin = 0;
     /**************************************************************/
@@ -301,10 +305,11 @@ int MatrixRead_Binary() //Reads in all required matrices
     fread(&rows, sizeof (int), 1, fin);
     fread(&cols, sizeof (int), 1, fin);
     printf("ProjectedImages_Fisher.mat [%d %d]\n", rows, cols);
-    ProjectedImages_Fisher.data = (double**) malloc(rows * sizeof (double*));
-    for (i = 0; i < rows; i++) {
-        ProjectedImages_Fisher.data[i] = (double*) malloc(cols * sizeof (double));
-    }
+    ProjectedImages_Fisher = matrix_constructor(rows, cols);
+    //ProjectedImages_Fisher.data = (double**) malloc(rows * sizeof (double*));
+    //for (i = 0; i < rows; i++) {
+    //    ProjectedImages_Fisher.data[i] = (double*) malloc(cols * sizeof (double));
+    //}
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
             fread(&(ProjectedImages_Fisher.data[i][j]), sizeof (double), 1, fin);
@@ -312,8 +317,8 @@ int MatrixRead_Binary() //Reads in all required matrices
     }
     printf("read ProjectedImages_Fisher.mat!!!\n");
     fflush(stdout);
-    ProjectedImages_Fisher.rows = rows;
-    ProjectedImages_Fisher.cols = cols;
+    //ProjectedImages_Fisher.rows = rows;
+    //ProjectedImages_Fisher.cols = cols;
     fclose(fin);
 
     /**************************************************************/
@@ -327,10 +332,11 @@ int MatrixRead_Binary() //Reads in all required matrices
     fread(&rows, sizeof (int), 1, fin);
     fread(&cols, sizeof (int), 1, fin);
     printf("v_fisherT_x_v_pcaT.mat [%d %d]\n", rows, cols);
-    v_fisherT_x_v_pcaT.data = (double**) malloc(rows * sizeof (double*));
-    for (i = 0; i < rows; i++) {
-        v_fisherT_x_v_pcaT.data[i] = (double*) malloc(cols * sizeof (double));
-    }
+    v_fisherT_x_v_pcaT = matrix_constructor(rows, cols);
+    //v_fisherT_x_v_pcaT.data = (double**) malloc(rows * sizeof (double*));
+    //for (i = 0; i < rows; i++) {
+    //    v_fisherT_x_v_pcaT.data[i] = (double*) malloc(cols * sizeof (double));
+    //}
     for (i = 0; i < rows; i++) {
         for (j = 0; j < cols; j++) {
             fread(&(v_fisherT_x_v_pcaT.data[i][j]), sizeof (double), 1, fin);
@@ -339,16 +345,17 @@ int MatrixRead_Binary() //Reads in all required matrices
     }
     printf("read v_fisherT_x_v_pcaT.mat!!!\n");
     fflush(stdout);
-    v_fisherT_x_v_pcaT.rows = rows;
-    v_fisherT_x_v_pcaT.cols = cols;
+    //v_fisherT_x_v_pcaT.rows = rows;
+    //v_fisherT_x_v_pcaT.cols = cols;
     fclose(fin);
     /**************************************************************/
 
     //Now make sure everything is opened properly
-    if (m_database.data == 0 || Inverse_V_Fisher.data == 0
-            || Inverse_V_PCA.data == 0 || ProjectedImages_Fisher.data == 0
-            || v_fisherT_x_v_pcaT.data == 0) {
-        return 0; //Memory not allocated properly somewhere
-    } else
-        return 1;
+    if (m_database.data == NULL || Inverse_V_Fisher.data == NULL
+            || Inverse_V_PCA.data == NULL || ProjectedImages_Fisher.data == NULL
+            || v_fisherT_x_v_pcaT.data == NULL) {
+        return 1; //Memory not allocated properly somewhere
+    } else {
+        return 0;
+    }
 }

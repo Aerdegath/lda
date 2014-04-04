@@ -30,7 +30,6 @@ sequentially.
  **/
 
 #define _GNU_SOURCE
-#include <assert.h>
 #include <dirent.h>
 #include <string.h>
 #include <stdio.h>
@@ -62,64 +61,13 @@ database_t *CreateDatabase(char TrainPath[])
 
     int i = 0;
     int j = 0;
-    //DIR *dir = opendir(TrainPath); // Open Directory Pointer
-    //struct dirent *myDirEntry; // pointer to directory entry
     char *FullPath; // path of file, e.g., ../LDAIMAGES/Train2/1.ppm
-    int FileCount = 0;
-    //char **Files; // list of filenames
-
-    //if (!dir) { // Failed to open directory
-    //    return NULL;
-    //}
-
-/*
-    // count the entries in the directory
-    myDirEntry = readdir(dir);
-    while (myDirEntry) {
-        if (strstr(myDirEntry->d_name, EXTENSION)) {
-            ImageCount++; // number of actual image files
-        }
-        ++FileCount;
-        myDirEntry = readdir(dir);
-    }
-*/
-    // Now let's go back and extract all filenames
-    //rewinddir(dir); // move dir pointer back to beginning
-
-    // Allocate memory for list of names
-    //Files = (char **) malloc(ImageCount * sizeof(char *));
-
-    //if (!Files) { //Dynamic Memory Allocation Failed
-    //    return NULL;
-    //}
 
     // read in all filenames
     struct dirent **namelist;
     ImageCount = scandir(TrainPath, &namelist, file_select, alphasort);
     if (ImageCount < 0) {
         perror("scandir");
-    }
-
-    // Read in the names of each file
-    for (i = 0; i < ImageCount; i++) {
-        /*
-        myDirEntry = readdir(dir);
-
-        // skip files that don't match format "*.ppm"
-        while (!strstr(myDirEntry->d_name, EXTENSION)) {
-            myDirEntry = readdir(dir);
-        }
-
-        // copy the filename into listing; takes care of allocation
-        Files[i] = strdup(myDirEntry->d_name);
-        if (!Files[i]) { // i.e., problem allocating
-        // free up what was allocated so far (0 up to i) and get out of here
-            for (j = i; j >= 0; j--) {
-                free(Files[i]);
-            }
-            return NULL;
-        }
-        */
     }
 
     //////////////Create Database Here///////////////
@@ -168,8 +116,6 @@ database_t *CreateDatabase(char TrainPath[])
     }
     free(namelist);
     namelist = NULL;
-    //free(dir);
-    //dir = NULL;
 
     // assign data to the returned structure
     final = (database_t *) malloc(sizeof(database_t));
