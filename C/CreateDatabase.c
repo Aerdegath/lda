@@ -62,6 +62,36 @@ database_t *CreateDatabase(char TrainPath[])
     int i = 0;
     int j = 0;
     char *FullPath; // path of file, e.g., ../LDAIMAGES/Train2/1.ppm
+<<<<<<< HEAD
+=======
+    //int FileCount = 0;
+    //char **Files; // list of filenames
+
+    //if (!dir) { // Failed to open directory
+    //    return NULL;
+    //}
+
+/*
+    // count the entries in the directory
+    myDirEntry = readdir(dir);
+    while (myDirEntry) {
+        if (strstr(myDirEntry->d_name, EXTENSION)) {
+            ImageCount++; // number of actual image files
+        }
+        ++FileCount;
+        myDirEntry = readdir(dir);
+    }
+*/
+    // Now let's go back and extract all filenames
+    //rewinddir(dir); // move dir pointer back to beginning
+
+    // Allocate memory for list of names
+    //Files = (char **) malloc(ImageCount * sizeof(char *));
+
+    //if (!Files) { //Dynamic Memory Allocation Failed
+    //    return NULL;
+    //}
+>>>>>>> 7bc73bdf80c4cb68c0c57134b5150c8a9d23e39a
 
     // read in all filenames
     struct dirent **namelist;
