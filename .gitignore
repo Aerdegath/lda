@@ -17,6 +17,7 @@
 *.out
 *.app
 example
+matrix_unit
 
 # Mac Cache files
 *.DS_STORE
