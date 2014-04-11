@@ -49,6 +49,7 @@ MATRIX **FisherfaceCore(const database_t *Database)
     //int C = D->images / Class_population; //Number of classes (or persons)
     int P = Database->images; //Total Number of training images
     int i, j;
+    int p_database, p_mean, p_dev, p_cov, p_eig;
     //int INFO; //Return value for LAPACK eigen function
     double temp = 0;
     MATRIX **M; //What the function returns
@@ -58,17 +59,24 @@ MATRIX **FisherfaceCore(const database_t *Database)
     MATRIX *D; //Eigenvalues
     MATRIX *V; //Eigenvectors
 
+    // data to print
+    p_database = 1;
+    p_mean = 1;
+    p_dev = 1;
+    p_cov = 1;
+    p_eig = 1;
+
     M = (MATRIX **) malloc(4 * sizeof(MATRIX *));
 
-
-//    printf("Database:\n");
-//    for (i = 0; i < WIDTH * HEIGHT; i++) {
-//        for (j = 0; j < P; j++) {
-//            printf("%6.0f", Database->data[i][j]);
-//        }
-//        printf("\n");
-//    }
-
+    if (p_database) {
+        printf("Database:\n");
+        for (i = 0; i < WIDTH * HEIGHT; i++) {
+            for (j = 0; j < P; j++) {
+                printf("%6.0f", Database->data[i][j]);
+            }
+            printf("\n");
+        }
+    }
 
     //**************************************************************************
     //Calculate mean
@@ -87,8 +95,10 @@ MATRIX **FisherfaceCore(const database_t *Database)
     //Assign mean database
     M[0] = mean;
 
-    //printf("\nmean:\n");
-    //matrix_print(M[0]);
+    if (p_mean) {
+        printf("\nmean:\n");
+        matrix_print(M[0]);
+    }
 
     //**************************************************************************
     //Calculate A, deviation matrix
@@ -102,8 +112,10 @@ MATRIX **FisherfaceCore(const database_t *Database)
         }
     }
 
-    //printf("\ndeviation:\n");
-    //matrix_print(A);
+    if (p_dev) {
+        printf("\ndeviation:\n");
+        matrix_print(A);
+    }
 
     //**************************************************************************
     //Calculate L, surrogate of covariance matrix, L = A'*A;
@@ -112,8 +124,10 @@ MATRIX **FisherfaceCore(const database_t *Database)
 
     cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, P, P, P, 1, *A->data, P, *A->data, P, 0, *L->data, P);
 
-    printf("\nL = surrogate of covariance:\n");
-    matrix_print(L);
+    if (p_cov) {
+        printf("\nL = surrogate of covariance:\n");
+        matrix_print(L);
+    }
 
     D = matrix_constructor(P, 1);
 
@@ -121,10 +135,12 @@ MATRIX **FisherfaceCore(const database_t *Database)
     V = L;
     L = NULL;
 
-    //printf("D, eigenvalues:\n");
-    //matrix_print(D);
-    //printf("V, eigenvectors:\n");
-    //matrix_print(V);
+    if (p_eig) {
+        printf("D, eigenvalues:\n");
+        matrix_print(D);
+        printf("V, eigenvectors:\n");
+        matrix_print(V);
+    }
 
 	//FREE INTERMEDIATES
     matrix_destructor(A);
