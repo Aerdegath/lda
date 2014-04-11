@@ -16,7 +16,7 @@ clc
 close all
 
 % The TrainDatabase is what algorithm uses to learn?
-TrainDatabasePath = '..\LDAIMAGES\Change\ss_resize'
+TrainDatabasePath = '..\LDAIMAGES\Change\ss_tiny_3w'
 % The TestDatabase is what images are being tested
 TestDatabasePath = '..\LDAIMAGES\Test3';
 
