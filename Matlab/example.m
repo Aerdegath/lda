@@ -16,9 +16,11 @@ clc
 close all
 
 % The TrainDatabase is what algorithm uses to learn?
-TrainDatabasePath = '..\LDAIMAGES\Change\ss_tiny_3w'
+%TrainDatabasePath = '..\LDAIMAGES\Change\ss_tiny_3w'
+TrainDatabasePath = fullfile('..','LDAIMAGES','Change','ss_tiny_3w')
 % The TestDatabase is what images are being tested
-TestDatabasePath = '..\LDAIMAGES\Test3';
+%TestDatabasePath = '..\LDAIMAGES\Test3';
+TestDatabasePath = fullfile('..','LDAIMAGES','Test3');
 
 load_stuff = 0; % need to run only the first time after you change the database
 

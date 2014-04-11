@@ -60,9 +60,9 @@ MATRIX **FisherfaceCore(const database_t *Database)
     MATRIX *V; //Eigenvectors
 
     // data to print
-    p_database = 1;
-    p_mean = 1;
-    p_dev = 1;
+    p_database = 0;
+    p_mean = 0;
+    p_dev = 0;
     p_cov = 1;
     p_eig = 1;
 
@@ -122,7 +122,7 @@ MATRIX **FisherfaceCore(const database_t *Database)
     //<.m: 42>
     L = matrix_constructor(P, P);
 
-    cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, P, P, P, 1, *A->data, P, *A->data, P, 0, *L->data, P);
+    cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, P, P, Database->pixels, 1, *A->data, P, *A->data, P, 0, *L->data, P);
 
     if (p_cov) {
         printf("\nL = surrogate of covariance:\n");
