@@ -50,18 +50,19 @@ for i = 1 : P-Class_number
 end
 
 %%%%%%%%%%%%%%%%%%%%%%%% Calculating the eigenvectors of covariance matrix 'C'
-V_PCA = A * L_eig_vec % A: centered image vectors
+V_PCA = A * L_eig_vec; % A: centered image vectors
 
 %%%%%%%%%%%%%%%%%%%%%%%% Projecting centered image vectors onto eigenspace
 % Zi = V_PCA' * (Ti-m_database)
 ProjectedImages_PCA = [];
 for i = 1 : P
     temp = V_PCA'*A(:,i);
-    ProjectedImages_PCA = [ProjectedImages_PCA temp]; 
+    ProjectedImages_PCA = [ProjectedImages_PCA temp];
 end
+ProjectedImages_PCA
 
 %%%%%%%%%%%%%%%%%%%%%%%% Calculating the mean of each class in eigenspace
-m_PCA = mean(ProjectedImages_PCA,2); % Total mean in eigenspace
+m_PCA = mean(ProjectedImages_PCA,2) % Total mean in eigenspace
 m = zeros(P-Class_number,Class_number); 
 Sw = zeros(P-Class_number,P-Class_number); % Initialization of Within Scatter Matrix
 Sb = zeros(P-Class_number,P-Class_number); % Initialization of Between Scatter Matrix

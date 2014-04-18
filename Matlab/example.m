@@ -16,7 +16,7 @@ clc
 close all
 
 % The TrainDatabase is what algorithm uses to learn?
-TrainDatabasePath = fullfile('..','LDAIMAGES','Change','ss_tiny_3w');
+TrainDatabasePath = fullfile('..','LDAIMAGES','Change','train');
 % The TestDatabase is what images are being tested
 TestDatabasePath = fullfile('..','LDAIMAGES','Test3');
 

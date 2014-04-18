@@ -50,48 +50,51 @@ MATRIX **FisherfaceCore(const database_t *Database)
     int pixels = Database->pixels; //total pixels per image (i.e., width * height)
     int Class_number = P / Class_population; //Number of classes (or persons)
     int i, j;
-    int p_database, p_mean, p_dev, p_cov, p_eig, p_vpca;
-    double temp = 0;
+    // debug print flags
+    int p_database = 0;
+    int p_mean = 0;
+    int p_dev = 0;
+    int p_cov = 0;
+    int p_eig = 0;
+    int p_vpca = 0;
+    int p_pipca = 1;
+    int p_mPCA = 1;
+
+    // MATRIX types
     MATRIX **M; //What the function returns
-    MATRIX *mean; //Pixelwise mean of database images
+    MATRIX *Database_matrix; //Database stored in MATRIX form
+    MATRIX *m_database; //Pixelwise mean of database images
     MATRIX *A; //Deviation matrix (imagewise difference from mean)
     MATRIX *L; //Surrogate of covariance matrix, L = A' * A
     MATRIX *D; //Eigenvalues of L
     MATRIX *V; //Eigenvectors of L
     MATRIX *L_eig_vec; //filtered eigenvectors
     MATRIX *V_PCA; //
-
-    // debug print
-    p_database = 0;
-    p_mean = 0;
-    p_dev = 0;
-    p_cov = 0;
-    p_eig = 0;
-    p_vpca = 1;
+    MATRIX *ProjectedImages_PCA;
+    MATRIX *m_PCA; //mean of ProjectedImages_PCA
 
     M = (MATRIX **) malloc(4 * sizeof(MATRIX *));
 
+    // Convert Database to MATRIX
+    Database_matrix = matrix_constructor(pixels, Database->images);
+    for (i = 0; i < Database_matrix->rows; i++) {
+        for (j = 0; j < Database_matrix->cols; j++) {
+            Database_matrix->data[i][j] = Database->data[i][j];
+        }
+    }
+
     if (p_database) {
         printf("Database\n");
-        database_print(Database);
+        matrix_print(Database_matrix, 0);
     }
 
     //**************************************************************************
     //Calculate mean
     //<.m: 36>
-    mean = matrix_constructor(pixels, 1);
-
-    //Calculate Mean matrix
-    for (i = 0; i < pixels; i++) {
-        temp = 0;
-        for (j = 0; j < P; j++) {
-            temp += (double) Database->data[i][j];
-        }
-        mean->data[i][0] = (temp / P);
-    }
+    m_database = matrix_mean(Database_matrix);
 
     //Assign mean database
-    M[0] = mean;
+    M[0] = m_database;
 
     if (p_mean) {
         printf("\nmean:\n");
@@ -106,7 +109,7 @@ MATRIX **FisherfaceCore(const database_t *Database)
     for (i = 0; i < pixels; i++) {
         // each column in A->data is the difference between an image and the mean
         for (j = 0; j < P; j++) {
-            A->data[i][j] = Database->data[i][j] - mean->data[i][0];
+            A->data[i][j] = Database->data[i][j] - m_database->data[i][0];
         }
     }
 
@@ -120,8 +123,9 @@ MATRIX **FisherfaceCore(const database_t *Database)
     //<.m: 42>
     L = matrix_constructor(P, P);
 
-  //cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans,   P,       P,       pixels,  1, *A->data, P,       *A->data, P,       0, *L->data, P);
-    cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans,   A->cols, A->cols, A->rows, 1, *A->data, A->cols, *A->data, A->cols, 0, *L->data, L->rows);
+  //cblas_dgemm(Order,         TransA,     TransB,       M,       N,       K,       alpha, A,        lda,     B,        ldb,     beta, C,        ldc);
+//  cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, P,       P,       pixels,  1,     *A->data, P,       *A->data, P,       0,    *L->data, P);
+    cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, A->cols, A->cols, A->rows, 1,     *A->data, A->cols, *A->data, A->cols, 0,    *L->data, L->cols);
 
     if (p_cov) {
         printf("\nL = surrogate of covariance:\n");
@@ -145,7 +149,7 @@ MATRIX **FisherfaceCore(const database_t *Database)
 
     //**************************************************************************
     //Sorting and eliminating small eigenvalues
-    //<.m: 46>
+    //<.m: 46-50>
 
     L_eig_vec = matrix_constructor(P, P - Class_number);
 
@@ -166,8 +170,8 @@ MATRIX **FisherfaceCore(const database_t *Database)
 
     V_PCA = matrix_constructor(pixels, P - Class_number);
 
-    //V_PCA = A * L_eig_vec; % A: centered image vectors
-    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A->rows, L_eig_vec->cols, A->cols, 1, *A->data, P, *L_eig_vec->data, P, 0, *V_PCA->data, P);
+    //void cblas_dgemm(Order,         TransA,       TransB,       M,      N,                K, alpha, *A,       lda,     *B,               ldb,             beta, *C,           ldc);
+    cblas_dgemm(       CblasRowMajor, CblasNoTrans, CblasNoTrans, pixels, P - Class_number, P, 1,     *A->data, A->cols, *L_eig_vec->data, L_eig_vec->cols, 0,    *V_PCA->data, V_PCA->cols);
 
     if (p_vpca) {
         printf("V_PCA:\n");
@@ -175,15 +179,58 @@ MATRIX **FisherfaceCore(const database_t *Database)
     }
 
     //**************************************************************************
+    //Projecting centered image vectors onto eigenspace
+    //<.m: 55-61>
+
+    ProjectedImages_PCA = matrix_constructor(P - Class_number, P);
+
+    for (i = 0; i < P; i++) {
+        //cblas_dgemm(Order,       TransA,     TransB,       M,                N, K,      alpha, A,            lda,         B,          ldb,     beta, C,                          ldc);
+        cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, P - Class_number, 1, pixels, 1,     *V_PCA->data, V_PCA->cols, &A->data[0][i], A->cols, 0, &ProjectedImages_PCA->data[0][i], ProjectedImages_PCA->cols);
+    }
+
+    if (p_pipca) {
+        printf("ProjectedImages_PCA:\n");
+        matrix_print(ProjectedImages_PCA, 2);
+    }
+
+    //**************************************************************************
+    //Calculating the mean of each class in eigenspace
+    //<.m: 64>
+//    m_PCA = mean(ProjectedImages_PCA,2); % Total mean in eigenspace
+//    m = zeros(P-Class_number,Class_number);
+//    Sw = zeros(P-Class_number,P-Class_number); % Initialization of Within Scatter Matrix
+//    Sb = zeros(P-Class_number,P-Class_number); % Initialization of Between Scatter Matrix
+//
+//    for i = 1 : Class_number
+//        m(:,i) = mean( ( ProjectedImages_PCA(:,((i-1)*Class_population+1):i*Class_population) ), 2 )';
+//
+//        S  = zeros(P-Class_number,P-Class_number);
+//        for j = ( (i-1)*Class_population+1 ) : ( i*Class_population )
+//            S = S + (ProjectedImages_PCA(:,j)-m(:,i))*(ProjectedImages_PCA(:,j)-m(:,i))';
+//        end
+//
+//        Sw = Sw + S; % Within Scatter Matrix
+//        Sb = Sb + (m(:,i)-m_PCA) * (m(:,i)-m_PCA)'; % Between Scatter Matrix
+//    end
+
+    m_PCA = matrix_mean(ProjectedImages_PCA);
+
+    if (p_mPCA) {
+        printf("m_PCA:\n");
+        matrix_print(m_PCA, 16);
+    }
+
+    //**************************************************************************
 
 	//FREE INTERMEDIATES
+    matrix_destructor(Database_matrix);
     matrix_destructor(A);
-
-    //...
     matrix_destructor(V);
     matrix_destructor(D);
     matrix_destructor(L_eig_vec);
     matrix_destructor(V_PCA);
+    matrix_destructor(ProjectedImages_PCA);
 
     return M;
 }
