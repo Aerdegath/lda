@@ -49,12 +49,12 @@ PPMImage* ppm_image_constructor(const char * filename)
    PPMImage* this_ptr = (PPMImage *) malloc(sizeof(PPMImage));
    if(!this_ptr)
    {
-		fprintf(ERROR_OUT, "ERROR %d: Unable to allocate memeory of PPMImage Object\nPress Enter To Exit...", errno);
+		fprintf(ERROR_OUT, "ERROR %d: Unable to allocate memory of PPMImage Object\nPress Enter To Exit...", errno);
 		getc(stdin);
         exit(10);
    }
 
-   //If memory has been allocated initilaize the member variables
+   //If memory has been allocated initialize the member variables
    if(this_ptr)
    {
       this_ptr->p = '\0';
@@ -181,6 +181,8 @@ void read_ppm_header(PPMImage* img, FILE *in)
    fscanf(in, "%d", &img->maxValue);
 
    skip_to_next_value(in);
+
+   //printf("width: %d, height: %d\n", img->width, img->height);
 
 return;
 }

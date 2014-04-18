@@ -7,7 +7,7 @@ typedef struct {
 } MATRIX;
 
 MATRIX * matrix_constructor(int rows, int cols);
-void matrix_print(MATRIX *M);
+void matrix_print(MATRIX *M, int decimals);
 void matrix_destructor(MATRIX * M);
 
 #endif

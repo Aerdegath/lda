@@ -45,9 +45,9 @@
 
 MATRIX **FisherfaceCore(const database_t *Database)
 {
-    //int Class_population = 4; //Set value according to database (Images per person)
-    //int C = D->images / Class_population; //Number of classes (or persons)
+    int Class_population = 4; //Set value according to database (Images per person)
     int P = Database->images; //Total Number of training images
+    int Class_number = P / Class_population; //Number of classes (or persons)
     int i, j;
     int p_database, p_mean, p_dev, p_cov, p_eig;
     //int INFO; //Return value for LAPACK eigen function
@@ -58,12 +58,13 @@ MATRIX **FisherfaceCore(const database_t *Database)
     MATRIX *L; //Surrogate of covariance matrix, L = A_trans * A
     MATRIX *D; //Eigenvalues
     MATRIX *V; //Eigenvectors
+    MATRIX *L_eig_vec; //filtered eigenvectors
 
-    // data to print
+    // debug print
     p_database = 0;
     p_mean = 0;
     p_dev = 0;
-    p_cov = 1;
+    p_cov = 0;
     p_eig = 1;
 
     M = (MATRIX **) malloc(4 * sizeof(MATRIX *));
@@ -97,7 +98,7 @@ MATRIX **FisherfaceCore(const database_t *Database)
 
     if (p_mean) {
         printf("\nmean:\n");
-        matrix_print(M[0]);
+        matrix_print(M[0], 2);
     }
 
     //**************************************************************************
@@ -114,11 +115,11 @@ MATRIX **FisherfaceCore(const database_t *Database)
 
     if (p_dev) {
         printf("\ndeviation:\n");
-        matrix_print(A);
+        matrix_print(A, 2);
     }
 
     //**************************************************************************
-    //Calculate L, surrogate of covariance matrix, L = A'*A;
+    //Calculate L, surrogate of covariance matrix, L = A'*A
     //<.m: 42>
     L = matrix_constructor(P, P);
 
@@ -126,9 +127,11 @@ MATRIX **FisherfaceCore(const database_t *Database)
 
     if (p_cov) {
         printf("\nL = surrogate of covariance:\n");
-        matrix_print(L);
+        matrix_print(L, 2);
     }
 
+    // Calculate eigenvectors and eigenvalues
+    //<.m: 43>
     D = matrix_constructor(P, 1);
 
     LAPACKE_dsyev(LAPACK_ROW_MAJOR, 'V', 'U', P, *L->data, P, *D->data);
@@ -137,16 +140,36 @@ MATRIX **FisherfaceCore(const database_t *Database)
 
     if (p_eig) {
         printf("D, eigenvalues:\n");
-        matrix_print(D);
+        matrix_print(D, 2);
         printf("V, eigenvectors:\n");
-        matrix_print(V);
+        matrix_print(V, 2);
     }
+
+    //**************************************************************************
+    //Sorting and eliminating small eigenvalues
+    //<.m: 46>
+
+    L_eig_vec = matrix_constructor(P, P - Class_number);
+
+    for (i = 0; i < L_eig_vec->rows; i++) {
+        for (j = 0; j < L_eig_vec->cols; j++) {
+            L_eig_vec->data[i][j] = V->data[i][j];
+        }
+    }
+
+    if (p_eig) {
+        printf("L_eig_vec, trimmed eigenvectors:\n");
+        matrix_print(L_eig_vec, 4);
+    }
+
+    //**************************************************************************
 
 	//FREE INTERMEDIATES
     matrix_destructor(A);
 
     //...
     matrix_destructor(V);
+    matrix_destructor(D);
 
     return M;
 }

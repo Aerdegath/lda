@@ -17,7 +17,7 @@
 #include "ppm.h"
 
 //These pathnames only work if working in the LDA/C folder
-#define TrainDatabasePath "../LDAIMAGES/Change/ss_tiny_3w"
+#define TrainDatabasePath "../LDAIMAGES/Change/sub_strain_numbered"
 #define TestDatabasePath "../LDAIMAGES/Test3"
 
 int main(int argc, char *argv[])

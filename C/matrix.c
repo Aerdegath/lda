@@ -28,13 +28,13 @@ MATRIX * matrix_constructor(int rows, int cols)
 /*
  * Print function
  */
-void matrix_print(MATRIX *M)
+void matrix_print(MATRIX *M, int decimals)
 {
     int i, j;
 
     for(i = 0; i < M->rows; i++) {
         for(j = 0; j < M->cols; j++) {
-            printf("%12.2lf", M->data[i][j]);
+            printf("%12.*lf", decimals, M->data[i][j]);
         }
         printf("\n");
     }

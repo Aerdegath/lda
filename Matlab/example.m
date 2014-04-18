@@ -16,17 +16,15 @@ clc
 close all
 
 % The TrainDatabase is what algorithm uses to learn?
-%TrainDatabasePath = '..\LDAIMAGES\Change\ss_tiny_3w'
-TrainDatabasePath = fullfile('..','LDAIMAGES','Change','ss_tiny_3w')
+TrainDatabasePath = fullfile('..','LDAIMAGES','Change','sub_strain_numbered');
 % The TestDatabase is what images are being tested
-%TestDatabasePath = '..\LDAIMAGES\Test3';
 TestDatabasePath = fullfile('..','LDAIMAGES','Test3');
 
 load_stuff = 0; % need to run only the first time after you change the database
 
 if (load_stuff == 0)
-    fprintf('Database, T:\n');
-    T = CreateDatabase(TrainDatabasePath)
+    %fprintf('Database, T:\n');
+    T = CreateDatabase(TrainDatabasePath);
     [m V_PCA V_Fisher ProjectedImages_Fisher] = FisherfaceCore(T);
     save output_faces.mat T m V_PCA V_Fisher ProjectedImages_Fisher;
 else
