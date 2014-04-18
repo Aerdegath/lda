@@ -47,45 +47,42 @@ MATRIX **FisherfaceCore(const database_t *Database)
 {
     int Class_population = 4; //Set value according to database (Images per person)
     int P = Database->images; //Total Number of training images
+    int pixels = Database->pixels; //total pixels per image (i.e., width * height)
     int Class_number = P / Class_population; //Number of classes (or persons)
     int i, j;
-    int p_database, p_mean, p_dev, p_cov, p_eig;
-    //int INFO; //Return value for LAPACK eigen function
+    int p_database, p_mean, p_dev, p_cov, p_eig, p_vpca;
     double temp = 0;
     MATRIX **M; //What the function returns
-    MATRIX *mean; //Mean matrix
-    MATRIX *A; //Deviation matrix
-    MATRIX *L; //Surrogate of covariance matrix, L = A_trans * A
-    MATRIX *D; //Eigenvalues
-    MATRIX *V; //Eigenvectors
+    MATRIX *mean; //Pixelwise mean of database images
+    MATRIX *A; //Deviation matrix (imagewise difference from mean)
+    MATRIX *L; //Surrogate of covariance matrix, L = A' * A
+    MATRIX *D; //Eigenvalues of L
+    MATRIX *V; //Eigenvectors of L
     MATRIX *L_eig_vec; //filtered eigenvectors
+    MATRIX *V_PCA; //
 
     // debug print
     p_database = 0;
     p_mean = 0;
     p_dev = 0;
     p_cov = 0;
-    p_eig = 1;
+    p_eig = 0;
+    p_vpca = 1;
 
     M = (MATRIX **) malloc(4 * sizeof(MATRIX *));
 
     if (p_database) {
-        printf("Database:\n");
-        for (i = 0; i < WIDTH * HEIGHT; i++) {
-            for (j = 0; j < P; j++) {
-                printf("%6.0f", Database->data[i][j]);
-            }
-            printf("\n");
-        }
+        printf("Database\n");
+        database_print(Database);
     }
 
     //**************************************************************************
     //Calculate mean
     //<.m: 36>
-    mean = matrix_constructor(Database->pixels, 1);
+    mean = matrix_constructor(pixels, 1);
 
     //Calculate Mean matrix
-    for (i = 0; i < Database->pixels; i++) {
+    for (i = 0; i < pixels; i++) {
         temp = 0;
         for (j = 0; j < P; j++) {
             temp += (double) Database->data[i][j];
@@ -104,9 +101,9 @@ MATRIX **FisherfaceCore(const database_t *Database)
     //**************************************************************************
     //Calculate A, deviation matrix
     //<.m: 39>
-    A = matrix_constructor(Database->pixels, P);
+    A = matrix_constructor(pixels, P);
 
-    for (i = 0; i < Database->pixels; i++) {
+    for (i = 0; i < pixels; i++) {
         // each column in A->data is the difference between an image and the mean
         for (j = 0; j < P; j++) {
             A->data[i][j] = Database->data[i][j] - mean->data[i][0];
@@ -123,7 +120,8 @@ MATRIX **FisherfaceCore(const database_t *Database)
     //<.m: 42>
     L = matrix_constructor(P, P);
 
-    cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans, P, P, Database->pixels, 1, *A->data, P, *A->data, P, 0, *L->data, P);
+  //cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans,   P,       P,       pixels,  1, *A->data, P,       *A->data, P,       0, *L->data, P);
+    cblas_dgemm(CblasRowMajor, CblasTrans, CblasNoTrans,   A->cols, A->cols, A->rows, 1, *A->data, A->cols, *A->data, A->cols, 0, *L->data, L->rows);
 
     if (p_cov) {
         printf("\nL = surrogate of covariance:\n");
@@ -142,7 +140,7 @@ MATRIX **FisherfaceCore(const database_t *Database)
         printf("D, eigenvalues:\n");
         matrix_print(D, 2);
         printf("V, eigenvectors:\n");
-        matrix_print(V, 2);
+        matrix_print(V, 4);
     }
 
     //**************************************************************************
@@ -163,6 +161,20 @@ MATRIX **FisherfaceCore(const database_t *Database)
     }
 
     //**************************************************************************
+    //Calculating the eigenvectors of covariance matrix 'C'
+    //<.m: 54>
+
+    V_PCA = matrix_constructor(pixels, P - Class_number);
+
+    //V_PCA = A * L_eig_vec; % A: centered image vectors
+    cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasNoTrans, A->rows, L_eig_vec->cols, A->cols, 1, *A->data, P, *L_eig_vec->data, P, 0, *V_PCA->data, P);
+
+    if (p_vpca) {
+        printf("V_PCA:\n");
+        matrix_print(V_PCA, 4);
+    }
+
+    //**************************************************************************
 
 	//FREE INTERMEDIATES
     matrix_destructor(A);
@@ -170,6 +182,8 @@ MATRIX **FisherfaceCore(const database_t *Database)
     //...
     matrix_destructor(V);
     matrix_destructor(D);
+    matrix_destructor(L_eig_vec);
+    matrix_destructor(V_PCA);
 
     return M;
 }

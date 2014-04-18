@@ -159,3 +159,19 @@ int file_select(const struct dirent *entry)
         return 0;
     }
 }
+
+/*
+ * Prints the database contents
+ * D: the database to print
+ */
+void database_print(const database_t *D)
+{
+    int i, j;
+
+    for (i = 0; i < D->pixels; i++) {
+        for (j = 0; j < D->images; j++) {
+            printf("%6.0f", D->data[i][j]);
+        }
+        printf("\n");
+    }
+}

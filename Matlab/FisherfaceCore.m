@@ -40,7 +40,7 @@ A = T - repmat(m_database,1,P);
 
 %%%%%%%%%%%%%%%%%%%%%%%% Snapshot method of Eigenface algorithm
 L = A'*A; % L is the surrogate of covariance matrix C=A*A'.
-[V D] = eig(L) % Diagonal elements of D are the eigenvalues for both L=A'*A and C=A*A'.
+[V D] = eig(L); % Diagonal elements of D are the eigenvalues for both L=A'*A and C=A*A'.
 
 %%%%%%%%%%%%%%%%%%%%%%%% Sorting and eliminating small eigenvalues
 L_eig_vec = [];
@@ -48,10 +48,9 @@ V_Fisher = [];
 for i = 1 : P-Class_number
     L_eig_vec = [L_eig_vec V(:,i)];
 end
-L_eig_vec
 
 %%%%%%%%%%%%%%%%%%%%%%%% Calculating the eigenvectors of covariance matrix 'C'
-V_PCA = A * L_eig_vec; % A: centered image vectors
+V_PCA = A * L_eig_vec % A: centered image vectors
 
 %%%%%%%%%%%%%%%%%%%%%%%% Projecting centered image vectors onto eigenspace
 % Zi = V_PCA' * (Ti-m_database)

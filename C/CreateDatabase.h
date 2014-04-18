@@ -21,10 +21,10 @@
 //GLOBAL VARIABLES FOR WIDTH AND HEIGHT
 //These must be changed to the correct width/height of ppm files being used
 #ifndef WIDTH
-#define WIDTH 128
+#define WIDTH 3
 #endif
 #ifndef HEIGHT
-#define HEIGHT 192
+#define HEIGHT 4
 #endif
 
 typedef struct {
@@ -33,10 +33,13 @@ typedef struct {
     int images;
 } database_t;
 
-// creates the database from files in the directory
+// constructor; creates the database from files in the directory
 database_t *CreateDatabase(char TrainPath[]);
 
-//Destructor
+// destructor
 void DestroyDatabase(database_t *D);
+
+// print database
+void database_print(const database_t *D);
 
 #endif
