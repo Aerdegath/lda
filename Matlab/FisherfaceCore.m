@@ -59,11 +59,11 @@ for i = 1 : P
     temp = V_PCA'*A(:,i);
     ProjectedImages_PCA = [ProjectedImages_PCA temp];
 end
-ProjectedImages_PCA
+ProjectedImages_PCA;
 
 %%%%%%%%%%%%%%%%%%%%%%%% Calculating the mean of each class in eigenspace
-m_PCA = mean(ProjectedImages_PCA,2) % Total mean in eigenspace
-m = zeros(P-Class_number,Class_number); 
+m_PCA = mean(ProjectedImages_PCA,2); % Total mean in eigenspace
+m = zeros(P-Class_number,Class_number);
 Sw = zeros(P-Class_number,P-Class_number); % Initialization of Within Scatter Matrix
 Sb = zeros(P-Class_number,P-Class_number); % Initialization of Between Scatter Matrix
 

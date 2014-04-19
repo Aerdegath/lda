@@ -88,6 +88,8 @@ database_t *CreateDatabase(char TrainPath[])
         sprintf(FullPath, "%s/%s", TrainPath, namelist[j]->d_name);
         // FullPath is now the entire path to image in question
 
+        printf("%s\n", FullPath);
+
         image = ppm_image_constructor(FullPath);
         grayscale(image); // convert image to grayscale in-place
 

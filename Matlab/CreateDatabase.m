@@ -36,7 +36,7 @@ for i = 1 : Train_Number
     % I have chosen the name of each image in databases as a corresponding
     % number. However, it is not mandatory!
     %str = strcat(TrainDatabasePath,'\',sprintf('%02d',i),'.ppm');
-    str = fullfile(TrainDatabasePath, strcat(sprintf('%02d',i),'.ppm'));
+    str = fullfile(TrainDatabasePath, strcat(sprintf('%d',i),'.ppm'));
     img = imread(str);
     img = rgb2gray(img);
     

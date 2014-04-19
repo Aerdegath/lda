@@ -57,8 +57,8 @@ MATRIX **FisherfaceCore(const database_t *Database)
     int p_cov = 0;
     int p_eig = 0;
     int p_vpca = 0;
-    int p_pipca = 1;
-    int p_mPCA = 1;
+    int p_pipca = 0;
+    int p_mPCA = 0;
 
     // MATRIX types
     MATRIX **M; //What the function returns
