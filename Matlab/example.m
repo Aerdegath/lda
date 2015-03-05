@@ -31,11 +31,11 @@ else
     load output_faces.mat *;
 end
 
-return;
+%return;
 
 pass = 0;
 fail = 0;
-for i=1:30 % this is for using Test2 database
+for i=1:120 % this is for using Test2 database
     TestImage = strcat(TestDatabasePath,'\',num2str(i),'.ppm');
 
     OutputNumber = Recognition(TestImage, m, V_PCA, V_Fisher, ProjectedImages_Fisher);
@@ -43,18 +43,18 @@ for i=1:30 % this is for using Test2 database
     strtest = strcat(TestDatabasePath, '\', num2str(i),'.ppm');
     im = imread(strtest);
     
-%     if(i==1)
-%         imshow(im);
-%     else
-%         figure,imshow(im);
-%     end
-%     title(strcat('Test Image',{' '}, num2str(i)));
+     if(i==1)
+         imshow(im);
+     else
+         figure,imshow(im);
+     end
+     title(strcat('Test Image',{' '}, num2str(i)));
 
     strtrain = strcat(TrainDatabasePath, '\', OutputNumber,'.ppm');
 
-%     im2 = imread(strtrain);
-%     figure,imshow(im2);
-%     title(strcat('Equivalent Image',{' '}, OutputName, '==', num2str(i)));
+     im2 = imread(strtrain);
+     figure,imshow(im2);
+     title(strcat('Equivalent Image',{' '}, OutputName, '==', num2str(i)));
 
     % New subject every 4 images? Doesn't even really match
     if(i == (OutputNumber/4)+1)

@@ -85,7 +85,7 @@ database_t *CreateDatabase(char TrainPath[])
 
     // for each image (each image being a column of T)
     for (j = 0; j < ImageCount; j++) {
-        sprintf(FullPath, "%s/%s", TrainPath, namelist[j]->d_name);
+        sprintf(FullPath, "%s/%d.ppm", TrainPath, j+1);
         // FullPath is now the entire path to image in question
 
         printf("%s\n", FullPath);

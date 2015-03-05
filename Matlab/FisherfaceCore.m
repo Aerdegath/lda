@@ -27,10 +27,9 @@ function [m_database V_PCA V_Fisher ProjectedImages_Fisher] = FisherfaceCore(T)
 % Original version by Amir Hossein Omidvarnia, October 2007
 %                     Email: aomidvar@ece.ut.ac.ir                  
 
- 
-Class_number = ( size(T,2) )/4; % Number of classes (or persons)
+Class_number = ( size(T,2) )/4 % Number of classes (or persons)
 Class_population = 4; % Number of images in each class
-P = Class_population * Class_number; % Total number of training images
+P = Class_population * Class_number % Total number of training images
 
 %%%%%%%%%%%%%%%%%%%%%%%% calculating the mean image
 m_database = mean(T,2);
@@ -59,17 +58,16 @@ for i = 1 : P
     temp = V_PCA'*A(:,i);
     ProjectedImages_PCA = [ProjectedImages_PCA temp];
 end
-ProjectedImages_PCA;
 
 %%%%%%%%%%%%%%%%%%%%%%%% Calculating the mean of each class in eigenspace
 m_PCA = mean(ProjectedImages_PCA,2); % Total mean in eigenspace
 m = zeros(P-Class_number,Class_number);
-Sw = zeros(P-Class_number,P-Class_number); % Initialization of Within Scatter Matrix
+Sw = zeros(P-Class_number,P-Class_number); % ;Initialization of Within Scatter Matrix
 Sb = zeros(P-Class_number,P-Class_number); % Initialization of Between Scatter Matrix
 
 for i = 1 : Class_number
     m(:,i) = mean( ( ProjectedImages_PCA(:,((i-1)*Class_population+1):i*Class_population) ), 2 )';    
-    
+
     S  = zeros(P-Class_number,P-Class_number); 
     for j = ( (i-1)*Class_population+1 ) : ( i*Class_population )
         S = S + (ProjectedImages_PCA(:,j)-m(:,i))*(ProjectedImages_PCA(:,j)-m(:,i))';

@@ -76,3 +76,31 @@ void matrix_destructor(MATRIX * M)
     free(M);
     return;
 }
+
+
+/*matrix_bounded_mean
+ * Arguments:   A           Matrix containing data to be averaged
+ *              start_row   index of first row to be summed
+ *              end_row     index of last row to be summed
+ *              start_col   index of first column in sum
+ *              end_col     index of last column within sum
+ * Returns:     MATRIX type containing a column vector which is the matrix
+ *              mean of the sub matrix referenced by the arguments of the func
+ */
+MATRIX *matrix_bounded_mean(MATRIX *A, int start_row, int end_row, int start_col, int end_col)
+{
+    int i, j;
+    int sum;
+
+    MATRIX * B = matrix_constructor(end_row - start_row + 1, 1);
+
+    for (i = start_row; i <= end_row, i++) {
+        sum = 0;
+        for (j = start_col; j <= end_col; j++) {
+            sum += (double) A->data[i][j];
+        }
+        B->data[i][0] = (sum / (end_col - start_col + 1));
+    }
+
+    return B;
+}

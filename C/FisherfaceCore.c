@@ -49,16 +49,16 @@ MATRIX **FisherfaceCore(const database_t *Database)
     int P = Database->images; //Total Number of training images
     int pixels = Database->pixels; //total pixels per image (i.e., width * height)
     int Class_number = P / Class_population; //Number of classes (or persons)
-    int i, j;
+    int i, j, k, l;
     // debug print flags
     int p_database = 0;
     int p_mean = 0;
     int p_dev = 0;
     int p_cov = 0;
-    int p_eig = 0;
+    int p_eig = 1;
     int p_vpca = 0;
-    int p_pipca = 0;
-    int p_mPCA = 0;
+    int p_pipca = 1;
+    int p_mPCA = 1;
 
     // MATRIX types
     MATRIX **M; //What the function returns
@@ -72,6 +72,9 @@ MATRIX **FisherfaceCore(const database_t *Database)
     MATRIX *V_PCA; //
     MATRIX *ProjectedImages_PCA;
     MATRIX *m_PCA; //mean of ProjectedImages_PCA
+    MATRIX *tempMean; //temporary matrix to store the mean of ProjectedImages_PCA
+    MATRIX *tempMat;
+    MATRIX *S;
 
     M = (MATRIX **) malloc(4 * sizeof(MATRIX *));
 
@@ -216,6 +219,49 @@ MATRIX **FisherfaceCore(const database_t *Database)
 
     m_PCA = matrix_mean(ProjectedImages_PCA);
 
+    m = matrix_constructor(P-Class_number,Class_number);
+    Sw = matrix_constructor(P-Class_number, P-Class_number);
+    Sb = matrix_constructor(P-Class_number, P-Class_number);
+    S = matrix_constructor(P-Class_number,P-Class_number);
+
+    
+    for (i = 1; i <= Class_number; i++)
+    {
+        tempMean = matrix_bounded_mean(ProjectedImages_PCA, 0, ProjectedImages_PCA->rows-1, (i-1)*Class_population+1, i*Class_population);
+        
+        for (j = 0; j < m->rows; j++)
+        {
+           m->data[j][i] = tempMean->data[j][1];
+        }
+        
+        matrix_destructor(tempMean);
+        
+        for (j = ((i-1)*Class_population+1); j <= (i*Class_population); j++)
+        {
+            tempMat = matrix_constructor(P-Class_number, 1);
+            
+            for (k = 0; k < (P-Class_number); k++)
+            {
+                tempMat->data[k][0] = ProjectedImages_PCA->data[k][j] - m->data[k][i];
+            }
+                
+            cblas_dgemm(CblasRowMajor, CblasNoTrans, CblasTrans, tempMat->rows, 1, 1, 1, 
+                        *tempMat->data, tempMat->cols, *tempMat->data, tempMat->cols, 0, *S->data, S->cols);  
+                        
+        }
+        
+        for (j = 0; j < Sw->rows; j++)
+        {
+           for (k = 0; k < Sw->rows; k++)
+           {
+               Sw->data[j][k] += S->data[j][k];
+           }
+        }
+        
+        
+        
+    }
+    
     if (p_mPCA) {
         printf("m_PCA:\n");
         matrix_print(m_PCA, 16);
