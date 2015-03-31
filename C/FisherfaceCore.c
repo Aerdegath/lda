@@ -75,6 +75,8 @@ MATRIX **FisherfaceCore(const database_t *Database)
     MATRIX *tempMean; //temporary matrix to store the mean of ProjectedImages_PCA
     MATRIX *tempMat;
     MATRIX *S;
+    MATRIX *J_eig_vec;
+    MATRIX *alphai, *alphar, *beta;
 
     M = (MATRIX **) malloc(4 * sizeof(MATRIX *));
 
@@ -271,6 +273,23 @@ MATRIX **FisherfaceCore(const database_t *Database)
         printf("m_PCA:\n");
         matrix_print(m_PCA, 16);
     }
+    
+    J_eig_vec = matrix_construct(P-Class_number,P-Class_number);
+    alphai = matrix_construct(P-Class_number,1);
+    alphar = matrix_construct(P-Class_number,1);
+    beta = matrix_construct(P-Class_number,1);
+    
+    // 'N' - do not compute left eig. values
+    // 'V' - compute right eig. values
+    // Sb->cols - the size of the matrices (square)
+    // Sb->data - the matrix A in eig(A,B)
+    // Sb->rows - the leading dimension of A
+    // Sw->data - the matrix B in eig(A,B)
+    // Sw->rows - the leading dimension of B
+    // alphai, alphar, beta - dummy values
+    
+    ddgev('N', 'V', Sb->cols, Sb->data, Sb->rows, Sw->data, Sw->rows, alphar, alphai, beta,
+
 
     //**************************************************************************
 
