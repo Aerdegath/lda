@@ -59,6 +59,8 @@ MATRIX **FisherfaceCore(const database_t *Database)
     int p_vpca = 0;
     int p_pipca = 1;
     int p_mPCA = 1;
+    double *work, *info;    // Array of doubles containing intermediate values for dggev
+    double temp_double;
 
     // MATRIX types
     MATRIX **M; //What the function returns
@@ -287,9 +289,22 @@ MATRIX **FisherfaceCore(const database_t *Database)
     // Sw->data - the matrix B in eig(A,B)
     // Sw->rows - the leading dimension of B
     // alphai, alphar, beta - dummy values
+    // J_eig_vec - matrix to output eigenvectors
+    // work - integer array output containing intermediate values
+    // -1 - automatically determine the size of work
+    // info - array containing informataion about dggev performance
     
-    ddgev('N', 'V', Sb->cols, Sb->data, Sb->rows, Sw->data, Sw->rows, alphar, alphai, beta,
+    ddgev('N', 'V', Sb->cols, Sb->data, Sb->rows, Sw->data, Sw->rows, alphar, alphai, beta, NULL, 1, J_eig_vec, J_eig_vec->rows, work, -1, info);
 
+    for (i = 0; i < P-ClassNumber; i++)
+    {
+        for (j = 0; j < P-ClassNumber / 2; j++)
+        {
+            temp_double = J_eig_vec->data[i][j];
+            J_eig_vec->data[i][j] = J_eig_vec->data[i][P-ClassNumber-j];
+            J_eig_vec->data[i][P-ClassNumber-j] = temp_double;
+        }
+    }
 
     //**************************************************************************
 
