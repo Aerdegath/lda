@@ -2,7 +2,7 @@
 
 CC=gcc
 
-all: example unit
+all: example unit matrixTest
 
 example: example.o CreateDatabase.o FisherfaceCore.o grayscale.o matrix.o ppm.o
 	$(CC) -g -Wall example.o CreateDatabase.o FisherfaceCore.o -llapacke -lblas matrix.o ppm.o grayscale.o -lm -o example
@@ -31,6 +31,16 @@ matrix.o: matrix.c matrix.h
 ppm.o: ppm.c ppm.h
 	$(CC) -c -g -Wall ppm.c
 
+matrixTest : matrixTest.o matrixOps.o
+	gcc -Wall -g matrixTest.o matrixOps.o -o matrixTest `pkg-config --libs gsl` -lm
+
+matrixTest.o : matrixTest.c matrixOps.h
+	gcc -Wall -g -c matrixTest.c
+
+matrixOps.o : matrixOps.c matrixOps.h
+	#gcc -Wall -g -c matrixOperations.c
+	gcc -Wall -g -c matrixOps.c `pkg-config --cflags gsl` -lm
+
 clean:
-	rm -rf *.o *.gch example matrix_unit
+	rm -rf *.o *.gch *.dat example matrix_unit matrixTest
 	clear
